@@ -107,7 +107,7 @@ def visualisation_slice():
     save_path = OUTPUT_DIR / "temperature_slice_interactive.html"
     fig.write_html(save_path)
 
-def plot_cube(num_depths=5, num_time_steps=3):
+def plot_cube(num_depths=3, num_time_steps=3):
     # Load the NetCDF file
     file_path = DATA_DIR / DATA_FILE
     data = xr.open_dataset(file_path)

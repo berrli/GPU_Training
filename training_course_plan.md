@@ -16,6 +16,11 @@
 - Familiarity with basic programming concepts in C/C++ or Python.
 - Basic knowledge of parallel computing principles is helpful but not mandatory.
 
+### Supporting Tools 
+
+Spack and the environment management. 
+
+
 ## Workshop Outline
 
 ---

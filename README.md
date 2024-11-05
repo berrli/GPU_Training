@@ -41,3 +41,6 @@ The CLI command for the data is:
 `copernicusmarine subset --dataset-id cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i --variable thetao --start-datetime 2024-01-01T00:00:00 --end-datetime 2024-01-07T00:00:00 --minimum-longitude -13.903248235212025 --maximum-longitude 6.186015157645116 --minimum-latitude 46.82995633719309 --maximum-latitude 65.31207865862164 --minimum-depth 0.49402499198913574 --maximum-depth 5727.9169921875`
 
 When you run the command then it should ask for both your username and password, and will then install the data file in the current directory. This can take a moment as the filesize is around 250MB. 
+
+
+## There needs to be compilers that are available for the GPU code for CUPy and so you need to then install nvhpc, which is best done through spack.
