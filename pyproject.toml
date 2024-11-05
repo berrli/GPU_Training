@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "GPU Training Course"
+version = "0.1.0"
+description = "A training course to explain the use of GPUs"
+authors = ["Liam Berrisford <l.berrisford3@exeter.ac.uk>"]
+readme = "README.md"
+packages = [{include = "content"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"  # or the Python version you're using
+xarray = "^2023.5.0"  # For handling NetCDF data
+netCDF4 = "^1.6.1"    # For reading NetCDF files
+matplotlib = "^3.7.1" # For plotting
+plotly = "^5.15.0"    # For interactive plotting and HTML export
+
+[tool.poetry.scripts]
+visualise_static = "content.support_scripts:visualisation_static"
+visualise_slice = "content.support_scripts:visualisation_slice"
+visualise_cube = "content.support_scripts:visualisation_cube"
+summary =  "content.support_scripts:summary"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
