@@ -1,6 +1,7 @@
-# Ignore everything in the data directory
+# Ignore everything in the data and output directory
 data/*
 output/*
 
-# But don't ignore the README.md file
-!data/README.md
+# Keep the directories themselves
+!data/.gitkeep
+!output/.gitkeep
