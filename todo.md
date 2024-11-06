@@ -1,8 +1,4 @@
-Create a spack environment that deals with the system level dependeices. This mean that both the python and the cuda needs to come from the spack environment. The goal for doing this it to make sure that the sudo access is not required for the platform
-
-Create a poetry environment for the python level packages. The goal of this is to make the process of adding python packages easier. 
-
-The main question is whether it is easier to get CUPy wih spack or peotry.
+It will also likely be better for the poetry command to be ran with the use of poetry run download_data rather than asking people to use the actual command line arguement for copernicus since it is quite cumbersome.
 
 # Tips and Tricks 
 

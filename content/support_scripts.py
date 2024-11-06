@@ -5,12 +5,42 @@ from mpl_toolkits.mplot3d import Axes3D
 from pathlib import Path
 import plotly.graph_objects as go
 import argparse
+import subprocess
+import os
 
 # Define the root directory
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data"
 OUTPUT_DIR = ROOT_DIR / "output"
 DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-01-07.nc"
+
+def download_ocean_data():
+    # Define the command as a list
+    command = [
+        "poetry", "run", "copernicusmarine", "subset",
+        "--dataset-id", "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i",
+        "--variable", "thetao",
+        "--start-datetime", "2024-01-01T00:00:00",
+        "--end-datetime", "2024-01-07T00:00:00",
+        "--minimum-longitude", "-13.903248235212025",
+        "--maximum-longitude", "6.186015157645116",
+        "--minimum-latitude", "46.82995633719309",
+        "--maximum-latitude", "65.31207865862164",
+        "--minimum-depth", "0.49402499198913574",
+        "--maximum-depth", "5727.9169921875"
+    ]
+
+    os.chdir(DATA_DIR)
+    
+    try:
+        # Run the command and enable interactive mode by attaching directly to the terminal's stdin/stdout
+        result = subprocess.run(command, check=True)
+        print("Data downloaded successfully.")
+    except subprocess.CalledProcessError as e:
+        print("An error occurred:", e)
+    finally:
+        # Change back to the original directory
+        os.chdir(DATA_DIR)
 
 def summary():
     # Load the NetCDF file from the data directory
