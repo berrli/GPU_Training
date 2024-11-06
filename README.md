@@ -16,7 +16,7 @@ You will then need to activate spack with:
 ```bash 
 source spack/share/spack/setup-env.sh
 ```
-> [!CHECK]
+> [!NOTE]
 > You can check that spack has been successfully installed by running `spack --version` which should return the version of spack that you have available. 
 
 You will need need to create a spack environment, which can be done with the following, creating a spack environment named "cuda_course"
@@ -59,7 +59,7 @@ poetry install
 > [!NOTE]
 > `poetry install` needs to be ran from within the training course repo. If you havnt then you need to clone this repo with `git clone https://github.com/berrli/GPU_Training` and then navigate to its root with `cd GPU_Training`
 
-> [!CHECK]
+> [!NOTE]
 > You can check that the installation has been successful by running `poetry run cuda_check`, which should return the number of CUDA devices that are currently avaiable, such as `Number of CUDA devices: 1`. If you want to find out more information about the device that is connected you can run a command such as `nvidia-smi` for a NVIDIA GPU.
 
 ## Helpful Auxiliary Software
@@ -190,22 +190,4 @@ This dataset was downloaded from the **Global Ocean Physics Analysis and Forecas
 
 Filename `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_1730799065517.nc`: A dataset downloaded from the Global Ocean Physics Analysis and Forecast service. Product Identifier Product identifier
 GLOBAL_ANALYSISFORECAST_PHY_001_024, Product Name: Global Ocean Physics ANalysis and Forecast, with the dataset as: cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i. The variable visualised is Sea water potential temperature thetao [°C]. 
-The area of interest that was selected was around the UK with the variables of N: 65.312, E:6.1860, S:46.829, W:-13.90. The depth that is being used is: 0.49m to 5727.9m. The file size for the file is 267.5MB. 
-
-
-## Data download 
-
-The only thing you need to do is to install the CLI with `pip install copernicusmarine`, described here: https://pypi.org/project/copernicusmarine/
-
-You will also need to create an account here: [Register for Account](https://data.marine.copernicus.eu/register?redirect=%2Fproduct%2FGLOBAL_ANALYSISFORECAST_PHY_001_024%2Fdownload%3Fdataset%3Dcmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_202406)
-
-You will then need to the data directory with `cd data`.
-
-The CLI command for the data is: 
-
-`copernicusmarine subset --dataset-id cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i --variable thetao --start-datetime 2024-01-01T00:00:00 --end-datetime 2024-01-07T00:00:00 --minimum-longitude -13.903248235212025 --maximum-longitude 6.186015157645116 --minimum-latitude 46.82995633719309 --maximum-latitude 65.31207865862164 --minimum-depth 0.49402499198913574 --maximum-depth 5727.9169921875`
-
-When you run the command then it should ask for both your username and password, and will then install the data file in the current directory. This can take a moment as the filesize is around 250MB. 
-
-
-## There needs to be compilers that are available for the GPU code for CUPy and so you need to then install nvhpc, which is best done through spack.
+The area of interest that was selected was around the UK with the variables of N: 65.312, E:6.1860, S:46.829, W:-13.90. The depth that is being used is: 0.49m to 5727.9m. The file size for the file is 267.5MB.
