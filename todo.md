@@ -17,7 +17,7 @@ if things are getting confusing and messed up with legacy path elements.
 - git clone https://github.com/spack/spack.git
 - source spack/share/spack/setup-env.sh
 - spack env create cuda_course
-- spack env create cuda_course
+- spack env activate -p cuda_course
 - spack add python@3.12 
 - spack add cuda
 - spack spec

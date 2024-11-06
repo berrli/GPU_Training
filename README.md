@@ -1,4 +1,74 @@
-# GPU_Training_Course
+# GPU Training Course 
+
+## Installation Instructions 
+
+The following provides the steps that are required to install the necessary compilers and packages to engage with the material in this course.
+
+### Spack - Installing system-level requirements
+Within this course [Spack](https://spack.io/) is being used to manage the system-level requirements, such as drivers. The reason for this is that alot of system-level requirements generally require priveleged permissions, such as the access to use of `sudo`. However as alot of the platforms that have GPUs available are HPC platforms, spack allows us to install drivers that normally would require privleged access without. There are also a range of other benefits to the use of spack that will be discussed in this course. 
+
+First you will need to clone the spack repo:
+``` bash
+git clone https://github.com/spack/spack.git
+```
+
+You will then need to activate spack with:
+```bash 
+source spack/share/spack/setup-env.sh
+```
+> [!CHECK]
+> You can check that spack has been successfully installed by running `spack --version` which should return the version of spack that you have available. 
+
+You will need need to create a spack environment, which can be done with the following, creating a spack environment named "cuda_course"
+```bash 
+spack env create cuda_course
+```
+which can then be activated with
+```bash 
+spack env activate -p cuda_course
+```
+
+In this course, spack is being used to install system level requirements, and so the required version of python and the needed driver of CUDA are installed via spack, with the following two commands. 
+```bash
+spack add python@3.12 
+spack add cuda
+```
+> [!NOTE]
+> This step will simply say that you intend to install these packages, at this time spack is still waiting for more packages to be added to the environment specification. We can check what the current specification is (e.g. package list, dependecies, compilers to be used etc.) with `spack spec`.
+
+Finally we are able to install all of the pakcages into out spack environment with 
+```bash 
+spack install
+```
+
+### Poetry - Installing user-level requirements
+
+Within this course, [Poetry](https://python-poetry.org/) is used to manage the user-level requirements. 
+
+Poetry can be installed by the following command: 
+```bash 
+curl -sSL https://install.python-poetry.org | python3 -
+```
+> [!NOTE]
+> Poetry can be uninstalled with `curl -sSL https://install.python-poetry.org | python3 - --uninstall`.
+
+All of the user-level requirements can be installed via Poetry with the command:
+```bash
+poetry install
+```
+> [!NOTE]
+> `poetry install` needs to be ran from within the training course repo. If you havnt then you need to clone this repo with `git clone https://github.com/berrli/GPU_Training` and then navigate to its root with `cd GPU_Training`
+
+> [!CHECK]
+> You can check that the installation has been successful by running `poetry run cuda_check`, which should return the number of CUDA devices that are currently avaiable, such as `Number of CUDA devices: 1`. If you want to find out more information about the device that is connected you can run a command such as `nvidia-smi` for a NVIDIA GPU.
+
+## Helpful Auxiliary Software
+
+### Using VSCode 
+
+#### Remote-SSH
+
+#### Live Server 
 
 ## Adding Live Server extention 
 You can open a HTML file with a right click and then select `Open With Live Server` that will let you open the HTML file with your browser. This makes having an interactive plot in the easiest way. 
