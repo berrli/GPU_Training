@@ -142,18 +142,11 @@ To download the dataset, follow these steps:
 - **Create a Copernicus Marine Account**:
    - You will need an account to access the data. Register here: [Register for Account](https://data.marine.copernicus.eu/register?redirect=%2Fproduct%2FGLOBAL_ANALYSISFORECAST_PHY_001_024%2Fdownload%3Fdataset%3Dcmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_202406).
 
-- **Navigate to the Data Directory**:
-   - Change to the directory where you would like to save the data:
-     ```bash
-     cd data
-     ```
-
 -  **Run the CLI Command to Download the Dataset**:
    - Use the following command to download the subset of data:
      ```bash
      poetry run download_data
      ```
-
    - This command will prompt you to enter your username and password. Once authenticated, the data file will download to the data directory. Please note that the download may take some time as the file size is approximately 250 MB.
 
 ## Data Description 
