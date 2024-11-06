@@ -7,12 +7,13 @@ readme = "README.md"
 packages = [{include = "content"}]
 
 [tool.poetry.dependencies]
-python = "^3.12"  # or the Python version you're using
-xarray = "^2023.5.0"  # For handling NetCDF data
-netCDF4 = "^1.6.1"    # For reading NetCDF files
-matplotlib = "^3.7.1" # For plotting
-plotly = "^5.15.0"    # For interactive plotting and HTML export
-cupy-cuda12x = "*"
+python = ">=3.12,<3.13"
+xarray = "^2023.5.0"       # For handling NetCDF data
+netCDF4 = "^1.6.1"         # For reading NetCDF files
+matplotlib = "^3.7.1"      # For plotting
+plotly = "^5.15.0"         # For interactive plotting and HTML export
+cupy-cuda12x = "*"         # For CUDA support with CuPy
+copernicusmarine = "*"     # For Copernicus Marine Service data access
 
 [tool.poetry.scripts]
 visualise_static = "content.support_scripts:visualisation_static"

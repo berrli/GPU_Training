@@ -12,6 +12,8 @@ The steps taken to install python 3.12 with spack wer, and the issue was the pre
 if things are getting confusing and messed up with legacy path elements. 
 
 
+
+Mention the quirk of having to have two different types of python one for Spack and then one for the Poetry. It is just generally a good idea and anecdaotally saves hassle than having them point to the same thing. The spack python is used for CUDA. 
 # Installation Instructions 
 
 - git clone https://github.com/spack/spack.git
