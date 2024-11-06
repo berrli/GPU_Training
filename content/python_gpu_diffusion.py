@@ -1,7 +1,10 @@
 import xarray as xr
 import plotly.graph_objects as go
 import argparse
-import cupy as cp
+import cupy
+from pathlib import Path
+
+import cupy._core
 
 # Define the root directory
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -13,7 +16,9 @@ DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_4
 
 def cuda_check():
     print("Running!")
-    #print(cp.cuda.runtime.get_version())
+    # Get the number of devices
+    num_devices = cupy.cuda.runtime.getDeviceCount()
+    print(f"Number of CUDA devices: {num_devices}")
 
 
 
