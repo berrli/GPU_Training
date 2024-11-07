@@ -120,6 +120,10 @@ def plot_slice(target_depth=0, animation_speed=100):
     selected_depth = depths[closest_depth_idx]
     temperature_subset = temperature.isel(depth=closest_depth_idx)
 
+    # Calculate the max temperature value across the subset for setting the color scale
+    max_temp = temperature_subset.values.max()
+    min_temp = temperature_subset.values.min()
+
     print("The depth being visualised is: " + str(selected_depth) + " as the target depth inputted was: " + str(target_depth))
 
     # Prepare latitudes, longitudes, and time steps
@@ -133,7 +137,10 @@ def plot_slice(target_depth=0, animation_speed=100):
         x=longitudes,
         y=latitudes,
         colorscale='Viridis',
-        colorbar=dict(title='Temperature (°C)')
+        colorbar=dict(title='Temperature (°C)'),
+        zmin=min_temp,  # Set color range minimum
+        zmax=max_temp    # Set color range maximum
+
     ))
 
     # Define frames for each time step
@@ -144,7 +151,9 @@ def plot_slice(target_depth=0, animation_speed=100):
                 z=temperature_subset.isel(time=t).values,
                 x=longitudes,
                 y=latitudes,
-                colorscale='Viridis'
+                colorscale='Viridis',
+                zmin=min_temp,  # Set color range minimum
+                zmax=max_temp    # Set color range maximum
             )],
             name=f"Time {t}"
         ))
@@ -218,6 +227,10 @@ def plot_cube(num_depths=3, num_time_steps=3):
     time_steps = temperature['time'].values[:num_time_steps]
     temperature_values = temperature.isel(depth=slice(0, num_depths), time=slice(0, num_time_steps)).values
 
+    # Calculate the max temperature value across the subset for setting the color scale
+    max_temp = temperature_subset.values.max()
+    min_temp = temperature_subset.values.min()
+
     # Create the figure and define frames for each time step
     fig = go.Figure()
 
@@ -229,7 +242,9 @@ def plot_cube(num_depths=3, num_time_steps=3):
             y=latitudes,
             surfacecolor=temperature_values[0, i],
             colorscale='Viridis',
-            colorbar=dict(title='Temperature (°C)')
+            colorbar=dict(title='Temperature (°C)'),
+            zmin=min_temp,  # Set color range minimum
+            zmax=max_temp    # Set color range maximum
         ))
 
     # Define frames for each subsequent time step
@@ -242,7 +257,9 @@ def plot_cube(num_depths=3, num_time_steps=3):
                 x=longitudes,
                 y=latitudes,
                 surfacecolor=temperature_values[t, i],
-                colorscale='Viridis'
+                colorscale='Viridis',
+                zmin=min_temp,  # Set color range minimum
+                zmax=max_temp    # Set color range maximum
             ))
         frames.append(go.Frame(data=frame_data, name=f"Time {t}"))
 
