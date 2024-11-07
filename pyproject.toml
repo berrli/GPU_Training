@@ -21,7 +21,7 @@ visualise_slice = "content.support_scripts:visualisation_slice"
 visualise_cube = "content.support_scripts:visualisation_cube"
 summary =  "content.support_scripts:summary"
 benchmark = "content.python_gpu_diffusion:run_benchmark"
-cuda_check = "content.python_gpu_diffusion:cuda_check"
+cuda_check = "content.support_scripts:cuda_check"
 download_data = "content.support_scripts:download_ocean_data"
 
 [build-system]
