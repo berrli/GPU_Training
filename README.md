@@ -1,5 +1,7 @@
 # GPU Training Course 
 
+This repository contains all of the materials for the running of a GPU Training Course.
+
 # Installation Instructions 
 
 The following provides the steps that are required to install the necessary compilers and packages to engage with the material in this course.
@@ -184,3 +186,14 @@ This dataset was downloaded from the **Global Ocean Physics Analysis and Forecas
 Filename `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_1730799065517.nc`: A dataset downloaded from the Global Ocean Physics Analysis and Forecast service. Product Identifier Product identifier
 GLOBAL_ANALYSISFORECAST_PHY_001_024, Product Name: Global Ocean Physics ANalysis and Forecast, with the dataset as: cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i. The variable visualised is Sea water potential temperature thetao [°C]. 
 The area of interest that was selected was around the UK with the variables of N: 65.312, E:6.1860, S:46.829, W:-13.90. The depth that is being used is: 0.49m to 5727.9m. The file size for the file is 267.5MB.
+
+# Tips and Tricks
+
+Programming GPUs can be pretty complex, particularly during the set-up phase, where a number of different drivers are required to run code on the GPU. This section provides some potential lines of inquiry as to what may be causing issues with your current set-up if you are entirely stuck based on personal past experiences of common faults. 
+
+## PATH
+In UNIX, **PATH** is an environment variable listing directories to search for commands. If a command isn’t found, it’s likely the directory containing it isn’t in PATH. However, due to the number of different versions of software used in these projects, such as having the same package compiled with different compilers, e.g. GCC for OpenMP or NVHPC-related compilers for OpenACC, then a misconfigured PATH can be a common cause of issues. The use of `which <command>` will help you to identify what is being run when you use that line on the command line. You can see this clearly within this project, where there is a python used by spack and then also a python used by poetry, where they share the same version, but their distinguishing factor is where they are located in regards to the file path. 
+
+## Starting Fresh 
+
+Sometimes, with the number of different elements involved in a GPU project, it can be helpful to clean the workspace and start fresh. To remove spack, you will also need to remove the `.spack` directory alongside the `spack` directory. If you don't remove the hidden directory and then simply clone the spack repo again, then you may find that the issue with the spack might be persistent from elements left in the hidden directory. 
