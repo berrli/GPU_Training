@@ -1,3 +1,4 @@
+from matplotlib import animation
 import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +13,14 @@ import os
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data"
 OUTPUT_DIR = ROOT_DIR / "output"
-DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-01-07.nc"
+DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-02-01.nc"
+
+def cuda_check():
+    print(sys.version)
+    print(type(sys.version))
+    # Get the number of devices
+    num_devices = cupy.cuda.runtime.getDeviceCount()
+    print(f"Number of CUDA devices: {num_devices}")
 
 def download_ocean_data():
     # Define the command as a list
@@ -21,7 +29,7 @@ def download_ocean_data():
         "--dataset-id", "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i",
         "--variable", "thetao",
         "--start-datetime", "2024-01-01T00:00:00",
-        "--end-datetime", "2024-01-07T00:00:00",
+        "--end-datetime", "2024-02-01T00:00:00",
         "--minimum-longitude", "-13.903248235212025",
         "--maximum-longitude", "6.186015157645116",
         "--minimum-latitude", "46.82995633719309",
@@ -98,10 +106,7 @@ def visualisation_static():
     # Optionally, close the figure after saving to free memory
     plt.close(fig)
 
-
-
-
-def visualisation_slice():
+def plot_slice(target_depth=0, animation_speed=100):
     # Load the NetCDF file
     file_path = DATA_DIR / DATA_FILE
     data = xr.open_dataset(file_path)
@@ -109,33 +114,94 @@ def visualisation_slice():
     # Assume the variable of interest is named 'temperature' (check the variable name in your file)
     temperature = data['thetao']
 
-    # Select a subset for plotting (e.g., take a single depth level or time step)
-    temperature_subset = temperature.isel(time=0, depth=0)  # First time step and surface level
+    # Find the closest depth level to the target depth
+    depths = temperature['depth'].values
+    closest_depth_idx = (abs(depths - target_depth)).argmin()
+    selected_depth = depths[closest_depth_idx]
+    temperature_subset = temperature.isel(depth=closest_depth_idx)
 
-    # Prepare data for 2D plotting
-    latitudes = temperature_subset['latitude'].values
-    longitudes = temperature_subset['longitude'].values
-    temperature_values = temperature_subset.values
+    print("The depth being visualised is: " + str(selected_depth) + " as the target depth inputted was: " + str(target_depth))
 
-    # Create the interactive heatmap
+    # Prepare latitudes, longitudes, and time steps
+    latitudes = temperature['latitude'].values
+    longitudes = temperature['longitude'].values
+    time_steps = temperature['time'].values
+    
+    # Create the figure and initial heatmap for the first time step
     fig = go.Figure(data=go.Heatmap(
-        z=temperature_values,
+        z=temperature_subset.isel(time=0).values,
         x=longitudes,
         y=latitudes,
         colorscale='Viridis',
         colorbar=dict(title='Temperature (°C)')
     ))
 
-    # Set labels and title
+    # Define frames for each time step
+    frames = []
+    for t in range(len(time_steps)):
+        frames.append(go.Frame(
+            data=[go.Heatmap(
+                z=temperature_subset.isel(time=t).values,
+                x=longitudes,
+                y=latitudes,
+                colorscale='Viridis'
+            )],
+            name=f"Time {t}"
+        ))
+
+    fig.frames = frames
+
+    # Add slider and play button to animate over all time steps
     fig.update_layout(
-        title="Ocean Surface Temperature",
+        title=f"Ocean Temperature Slice at Depth Level {selected_depth}m (Closest to {target_depth}m)",
         xaxis_title="Longitude",
-        yaxis_title="Latitude"
+        yaxis_title="Latitude",
+        updatemenus=[{
+            "type": "buttons",
+            "showactive": False,
+            "buttons": [{
+                "label": "Play",
+                "method": "animate",
+                "args": [None, {"frame": {"duration": animation_speed, "redraw": True}, "fromcurrent": True}]  # Adjust duration here
+            }, {
+                "label": "Pause",
+                "method": "animate",
+                "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate", "transition": {"duration": 0}}]
+            }]
+        }],
+        sliders=[{
+            "active": 0,
+            "yanchor": "top",
+            "xanchor": "left",
+            "currentvalue": {
+                "font": {"size": 20},
+                "prefix": "Time Step: ",
+                "visible": True,
+                "xanchor": "right"
+            },
+            "steps": [{
+                "label": f"{t}",
+                "method": "animate",
+                "args": [[f"Time {t}"], {"frame": {"duration": 300, "redraw": True}, "mode": "immediate", "transition": {"duration": 0}}]  # Adjust duration here
+            } for t in range(len(time_steps))]
+        }]
     )
 
     # Save the interactive plot as an HTML file
-    save_path = OUTPUT_DIR / "temperature_slice_interactive.html"
+    save_path = OUTPUT_DIR / "temperature_2d_interactive.html"
     fig.write_html(save_path)
+
+def visualisation_slice():
+    parser = argparse.ArgumentParser(description="Visualize a 2D temperature cube.")
+    parser.add_argument("--target_depth", type=int, default=50, help="Target Depth Level.")
+    parser.add_argument("--animation_speed", type=int, default=300, help="Target Depth Level.")
+
+    args = parser.parse_args()
+
+    # Pass parsed arguments to visualisation_slice
+    plot_slice(target_depth=args.target_depth, animation_speed=args.animation_speed)
+
+
 
 def plot_cube(num_depths=3, num_time_steps=3):
     # Load the NetCDF file
@@ -223,7 +289,7 @@ def plot_cube(num_depths=3, num_time_steps=3):
     )
 
     # Save the interactive plot as an HTML file
-    save_path = OUTPUT_DIR / "temperature_3d_profile_interactive.html"
+    save_path = OUTPUT_DIR / "temperature_3d_interactive.html"
     fig.write_html(save_path)
 
 def visualisation_cube():

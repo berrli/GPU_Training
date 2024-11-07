@@ -15,15 +15,6 @@ DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_4
 
 
 
-def cuda_check():
-    print(sys.version)
-    print(type(sys.version))
-    # Get the number of devices
-    num_devices = cupy.cuda.runtime.getDeviceCount()
-    print(f"Number of CUDA devices: {num_devices}")
-
-
-
 def load_temperature_data(num_depths, num_time_steps):
     # Load the NetCDF file
     data = xr.open_dataset(DATA_FILE)
