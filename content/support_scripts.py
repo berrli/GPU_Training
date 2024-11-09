@@ -1,3 +1,4 @@
+from ast import Str
 from matplotlib import animation
 import xarray as xr
 import numpy as np
@@ -14,7 +15,7 @@ import cupy
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data"
 OUTPUT_DIR = ROOT_DIR / "output"
-DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-02-01.nc"
+ORIGINAL_DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-01-02.nc"
 
 def cuda_check():
     # Get the number of devices
@@ -28,7 +29,7 @@ def download_ocean_data():
         "--dataset-id", "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i",
         "--variable", "thetao",
         "--start-datetime", "2024-01-01T00:00:00",
-        "--end-datetime", "2024-02-01T00:00:00",
+        "--end-datetime", "2024-01-02T00:00:00",
         "--minimum-longitude", "-13.903248235212025",
         "--maximum-longitude", "6.186015157645116",
         "--minimum-latitude", "46.82995633719309",
@@ -49,14 +50,14 @@ def download_ocean_data():
         # Change back to the original directory
         os.chdir(DATA_DIR)
 
-def summary():
+def calculate_summary(data_file):
     # Load the NetCDF file from the data directory
-    file_path = DATA_DIR / DATA_FILE
+    file_path = DATA_DIR / data_file
     data = xr.open_dataset(file_path)
-
+    
     # Assume the variable of interest is named 'temperature' (check the variable name in your file)
     temperature = data['thetao']
-
+    print("The dimensions of the data is: " + str(temperature.shape))
     # Print some summary statistics
     print("Temperature Summary Statistics:")
     print("Mean temperature:", temperature.mean().item())
@@ -68,10 +69,18 @@ def summary():
     print("\nDataset Dimensions and Coordinates:")
     print(data)
 
+def summary():
+    parser = argparse.ArgumentParser(description="Calculate Summary Statistics for a datafile")
+    parser.add_argument("--data_file", type=str, default=ORIGINAL_DATA_FILE, help="Data file for visualisation.")
 
-def visualisation_static():
+    args = parser.parse_args()
+
+    # Pass parsed arguments to visualisation_slice
+    calculate_summary(data_file=args.data_file)
+
+def visualisation_static(data_file=ORIGINAL_DATA_FILE):
     # Load the NetCDF file
-    file_path = DATA_DIR / DATA_FILE
+    file_path = DATA_DIR / data_file
     data = xr.open_dataset(file_path)
 
     # Assume the variable of interest is named 'temperature' (check the variable name in your file)
@@ -105,9 +114,9 @@ def visualisation_static():
     # Optionally, close the figure after saving to free memory
     plt.close(fig)
 
-def plot_slice(target_depth=0, animation_speed=100):
+def plot_slice(target_depth=0, animation_speed=100, data_file=ORIGINAL_DATA_FILE):
     # Load the NetCDF file
-    file_path = DATA_DIR / DATA_FILE
+    file_path = DATA_DIR / data_file
     data = xr.open_dataset(file_path)
 
     # Assume the variable of interest is named 'temperature' (check the variable name in your file)
@@ -118,10 +127,13 @@ def plot_slice(target_depth=0, animation_speed=100):
     closest_depth_idx = (abs(depths - target_depth)).argmin()
     selected_depth = depths[closest_depth_idx]
     temperature_subset = temperature.isel(depth=closest_depth_idx)
-
     # Calculate the max temperature value across the subset for setting the color scale
-    max_temp = temperature_subset.values.max()
-    min_temp = temperature_subset.values.min()
+    # Calculate the max and min temperature values across the subset, ignoring NaNs
+    max_temp = np.nanmax(temperature_subset.values)
+    min_temp = np.nanmin(temperature_subset.values)
+
+    print("MAX TEMP: " + str(max_temp))
+    print("MIN TEMP: " + str(min_temp))
 
     print("The depth being visualised is: " + str(selected_depth) + " as the target depth inputted was: " + str(target_depth))
 
@@ -196,24 +208,29 @@ def plot_slice(target_depth=0, animation_speed=100):
     )
 
     # Save the interactive plot as an HTML file
-    save_path = OUTPUT_DIR / "temperature_2d_interactive.html"
+    if data_file==ORIGINAL_DATA_FILE:
+        save_path = OUTPUT_DIR / "original_temperature_2d_interactive.html"
+    else:
+        save_path = OUTPUT_DIR / "predicted_temperature_2d_interactive.html"
+
     fig.write_html(save_path)
 
 def visualisation_slice():
     parser = argparse.ArgumentParser(description="Visualize a 2D temperature cube.")
     parser.add_argument("--target_depth", type=int, default=50, help="Target Depth Level.")
     parser.add_argument("--animation_speed", type=int, default=300, help="Target Depth Level.")
+    parser.add_argument("--data_file", type=str, default=ORIGINAL_DATA_FILE, help="Data file for visualisation.")
 
     args = parser.parse_args()
 
     # Pass parsed arguments to visualisation_slice
-    plot_slice(target_depth=args.target_depth, animation_speed=args.animation_speed)
+    plot_slice(target_depth=args.target_depth, animation_speed=args.animation_speed, data_file=args.data_file)
 
 
 
-def plot_cube(num_depths=3, num_time_steps=3):
+def plot_cube(num_depths=3, num_time_steps=3, data_file=ORIGINAL_DATA_FILE):
     # Load the NetCDF file
-    file_path = DATA_DIR / DATA_FILE
+    file_path = DATA_DIR / data_file
     data = xr.open_dataset(file_path)
 
     # Assume the variable of interest is named 'temperature' (check the variable name in your file)
@@ -227,8 +244,12 @@ def plot_cube(num_depths=3, num_time_steps=3):
     temperature_values = temperature.isel(depth=slice(0, num_depths), time=slice(0, num_time_steps)).values
 
     # Calculate the max temperature value across the subset for setting the color scale
-    max_temp = temperature_subset.values.max()
-    min_temp = temperature_subset.values.min()
+    # Calculate the max and min temperature values across the subset, ignoring NaNs
+    max_temp = np.nanmax(temperature_values)
+    min_temp = np.nanmin(temperature_values)
+
+    print("MAX TEMP: " + str(max_temp))
+    print("MIN TEMP: " + str(min_temp))
 
     # Create the figure and define frames for each time step
     fig = go.Figure()
@@ -305,17 +326,22 @@ def plot_cube(num_depths=3, num_time_steps=3):
     )
 
     # Save the interactive plot as an HTML file
-    save_path = OUTPUT_DIR / "temperature_3d_interactive.html"
+    # Save the interactive plot as an HTML file
+    if data_file==ORIGINAL_DATA_FILE:
+        save_path = OUTPUT_DIR / "original_temperature_3d_interactive.html"
+    else:
+        save_path = OUTPUT_DIR / "predicted_temperature_3d_interactive.html"
     fig.write_html(save_path)
 
 def visualisation_cube():
     parser = argparse.ArgumentParser(description="Visualize a 3D temperature cube.")
     parser.add_argument("--num_depths", type=int, default=5, help="Number of depth levels.")
     parser.add_argument("--num_time_steps", type=int, default=3, help="Number of time steps.")
+    parser.add_argument("--data_file", type=str, default=ORIGINAL_DATA_FILE, help="Data file for visualisation.")
 
     args = parser.parse_args()
 
     # Pass parsed arguments to visualisation_cube
-    plot_cube(num_depths=args.num_depths, num_time_steps=args.num_time_steps)
+    plot_cube(num_depths=args.num_depths, num_time_steps=args.num_time_steps, data_file=args.data_file)
 
 

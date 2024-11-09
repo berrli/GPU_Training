@@ -197,3 +197,7 @@ In UNIX, **PATH** is an environment variable listing directories to search for c
 ## Starting Fresh 
 
 Sometimes, with the number of different elements involved in a GPU project, it can be helpful to clean the workspace and start fresh. To remove spack, you will also need to remove the `.spack` directory alongside the `spack` directory. If you don't remove the hidden directory and then simply clone the spack repo again, then you may find that the issue with the spack might be persistent from elements left in the hidden directory. 
+
+TODO:
+
+The method that currently saves he simulation code there is a known issue wehre due to the original NetCDF being used you cant exceed the numer of timesteps that are being used. This is somethign that will need to be changed in the future. Hopefully this can be solved simply with the save_to_netcdf function that will copy the dimensions for the depth, lat and long since those will remain constant. 

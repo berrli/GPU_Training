@@ -14,15 +14,17 @@ matplotlib = "^3.7.1"      # For plotting
 plotly = "^5.15.0"         # For interactive plotting and HTML export
 cupy-cuda12x = "*"         # For CUDA support with CuPy
 copernicusmarine = "*"     # For Copernicus Marine Service data access
+tqdm = "*"
 
 [tool.poetry.scripts]
 visualise_static = "content.support_scripts:visualisation_static"
 visualise_slice = "content.support_scripts:visualisation_slice"
 visualise_cube = "content.support_scripts:visualisation_cube"
 summary =  "content.support_scripts:summary"
-benchmark = "content.python_gpu_diffusion:run_benchmark"
 cuda_check = "content.support_scripts:cuda_check"
 download_data = "content.support_scripts:download_ocean_data"
+diffusion_cupy = "content.python_gpu_diffusion:run_diffusion_cupy"
+diffusion_numpy = "content.python_gpu_diffusion:run_diffusion_numpy"
 
 [build-system]
 requires = ["poetry-core"]
