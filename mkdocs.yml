@@ -1,6 +1,13 @@
 site_name: "GPU Training"
 theme:
-  name: "readthedocs"
+  name: "material"
+  features:
+    - content.code.copy  # Enable copy button on code blocks
+  palette:
+    primary: "indigo"
+    accent: "indigo"
+  code:
+    highlight: "github-dark"  # Customize code syntax highlighting
 docs_dir: course
 nav:
   - Setup: 00_setup.md
