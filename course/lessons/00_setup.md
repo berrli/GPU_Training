@@ -192,8 +192,3 @@ This dataset was downloaded from the **Global Ocean Physics Analysis and Forecas
 - **267.5 MB**
 
 
-Filename `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_1730799065517.nc`: A dataset downloaded from the Global Ocean Physics Analysis and Forecast service. Product Identifier Product identifier
-GLOBAL_ANALYSISFORECAST_PHY_001_024, Product Name: Global Ocean Physics ANalysis and Forecast, with the dataset as: cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i. The variable visualised is Sea water potential temperature thetao [°C]. 
-The area of interest that was selected was around the UK with the variables of N: 65.312, E:6.1860, S:46.829, W:-13.90. The depth that is being used is: 0.49m to 5727.9m. The file size for the file is 267.5MB.
-
-
