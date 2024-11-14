@@ -166,7 +166,9 @@ If you were now to use `spack spec` again you will see that the proposed specifi
 
 Once you are happy with the proposed specification you can install all of the required packages with:
 
-`spack install`
+``` bash
+spack install
+```
 
 After the instalation process has completed the relevant packages should now be available for use. 
 
@@ -175,7 +177,9 @@ After the instalation process has completed the relevant packages should now be 
 
 You can deactivate the environment by using 
 
-`spack env deactivate`
+``` bash
+spack env deactivate
+```
 
 
 
