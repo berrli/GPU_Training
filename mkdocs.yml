@@ -8,7 +8,16 @@ theme:
     accent: "indigo"
   code:
     highlight: "github-dark"  # Customize code syntax highlighting
+markdown_extensions:
+  - admonition            # Enables admonition boxes
+  - pymdownx.extra
+  - pymdownx.superfences
+  - pymdownx.details      # Optional: Adds collapsible sections
+  - pymdownx.highlight    # Optional: Enhances code highlighting
 docs_dir: course
 nav:
-  - Setup: 00_setup.md
-  - Spack: 01_spack.md
+  - Home: index.md        # Adds index.md as the homepage
+  - Setup: lessons/00_setup.md
+  - Spack: lessons/01_spack.md
+  - Tips and Tricks: tips_and_tricks.md
+  - Spack Cheat Sheet: spack_cheat_sheet.md

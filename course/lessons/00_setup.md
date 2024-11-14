@@ -16,8 +16,8 @@ You will then need to activate spack with:
 ```bash 
 source spack/share/spack/setup-env.sh
 ```
-> [!NOTE]
-> You can check that spack has been successfully installed by running `spack --version` which should return the version of spack that you have available. 
+!!! note
+    You can check that spack has been successfully installed by running `spack --version` which should return the version of spack that you have available. 
 
 You will need need to create a spack environment, which can be done with the following, creating a spack environment named "cuda_course"
 ```bash 
@@ -33,8 +33,8 @@ In this course, spack is being used to install system level requirements, and so
 spack add python@3.12 
 spack add cuda
 ```
-> [!NOTE]
-> This step will simply say that you intend to install these packages, at this time spack is still waiting for more packages to be added to the environment specification. We can check what the current specification is (e.g. package list, dependecies, compilers to be used etc.) with `spack spec`.
+!!! note
+    This step will simply say that you intend to install these packages, at this time spack is still waiting for more packages to be added to the environment specification. We can check what the current specification is (e.g. package list, dependecies, compilers to be used etc.) with `spack spec`.
 
 Finally we are able to install all of the pakcages into out spack environment with 
 ```bash 
@@ -49,18 +49,18 @@ Poetry can be installed by the following command:
 ```bash 
 curl -sSL https://install.python-poetry.org | python3 -
 ```
-> [!NOTE]
-> Poetry can be uninstalled with `curl -sSL https://install.python-poetry.org | python3 - --uninstall`.
+!!! note
+    Poetry can be uninstalled with `curl -sSL https://install.python-poetry.org | python3 - --uninstall`.
 
 All of the user-level requirements can be installed via Poetry with the command:
 ```bash
 poetry install
 ```
-> [!NOTE]
-> `poetry install` needs to be ran from within the training course repo. If you havnt then you need to clone this repo with `git clone https://github.com/berrli/GPU_Training` and then navigate to its root with `cd GPU_Training`
+!!! note 
+    `poetry install` needs to be ran from within the training course repo. If you havnt then you need to clone this repo with `git clone https://github.com/berrli/GPU_Training` and then navigate to its root with `cd GPU_Training`
 
-> [!NOTE]
-> You can check that the installation has been successful by running `poetry run cuda_check`, which should return the number of CUDA devices that are currently avaiable, such as `Number of CUDA devices: 1`. If you want to find out more information about the device that is connected you can run a command such as `nvidia-smi` for a NVIDIA GPU.
+!!! note
+    You can check that the installation has been successful by running `poetry run cuda_check`, which should return the number of CUDA devices that are currently avaiable, such as `Number of CUDA devices: 1`. If you want to find out more information about the device that is connected you can run a command such as `nvidia-smi` for a NVIDIA GPU.
 
 ## Helpful Auxiliary Software
 
@@ -101,12 +101,13 @@ Ensure you can SSH into the remote machine from your terminal. If SSH is not alr
 
 5. Add a new SSH configuration to the file, specifying the remote machine’s details. Here’s an example configuration:
 
-   ```plaintext
+   ``` plaintext
    Host my-remote-machine
        HostName <remote-ip-or-hostname>
        User <your-username>
        IdentityFile ~/.ssh/id_rsa  # Path to your SSH private key
        Port 22  # Default SSH port; change if needed
+   ```
 
 ##### Connecting to remote from within VSCode
 
@@ -135,6 +136,7 @@ As this course produces 3D outputs, some supporting code will generate interacti
 - This eliminates the need to manually refresh the browser, speeding up development.
 
 # Data
+
 ## Data Download
 
 To download the dataset, follow these steps:
@@ -185,14 +187,4 @@ Filename `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_1730799065517.nc`: A dat
 GLOBAL_ANALYSISFORECAST_PHY_001_024, Product Name: Global Ocean Physics ANalysis and Forecast, with the dataset as: cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i. The variable visualised is Sea water potential temperature thetao [°C]. 
 The area of interest that was selected was around the UK with the variables of N: 65.312, E:6.1860, S:46.829, W:-13.90. The depth that is being used is: 0.49m to 5727.9m. The file size for the file is 267.5MB.
 
-# Tips and Tricks
-
-Programming GPUs can be pretty complex, particularly during the set-up phase, where a number of different drivers are required to run code on the GPU. This section provides some potential lines of inquiry as to what may be causing issues with your current set-up if you are entirely stuck based on personal past experiences of common faults. 
-
-## PATH
-In UNIX, **PATH** is an environment variable listing directories to search for commands. If a command isn’t found, it’s likely the directory containing it isn’t in PATH. However, due to the number of different versions of software used in these projects, such as having the same package compiled with different compilers, e.g. GCC for OpenMP or NVHPC-related compilers for OpenACC, then a misconfigured PATH can be a common cause of issues. The use of `which <command>` will help you to identify what is being run when you use that line on the command line. You can see this clearly within this project, where there is a python used by spack and then also a python used by poetry, where they share the same version, but their distinguishing factor is where they are located in regards to the file path. 
-
-## Starting Fresh 
-
-Sometimes, with the number of different elements involved in a GPU project, it can be helpful to clean the workspace and start fresh. To remove spack, you will also need to remove the `.spack` directory alongside the `spack` directory. If you don't remove the hidden directory and then simply clone the spack repo again, then you may find that the issue with the spack might be persistent from elements left in the hidden directory. 
 
