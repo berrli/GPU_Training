@@ -1,0 +1,7 @@
+site_name: "GPU Training"
+theme:
+  name: "mkdocs"
+docs_dir: course
+nav:
+  - Setup: 00_setup.md
+  - Spack: 01_spack.md
