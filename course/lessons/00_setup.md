@@ -4,6 +4,15 @@
 
 The following provides the steps that are required to install the necessary compilers and packages to engage with the material in this course.
 
+## Clone the Repo 
+
+To engage with all of the content within this GPU Training course you will need to clone the repo, which can be done with 
+
+``` bash 
+git clone https://github.com/berrli/GPU_Training
+```
+
+
 ## Spack - Installing system-level requirements
 Within this course [Spack](https://spack.io/) is being used to manage the system-level requirements, such as drivers. The reason for this is that alot of system-level requirements generally require priveleged permissions, such as the access to use of `sudo`. However as alot of the platforms that have GPUs available are HPC platforms, spack allows us to install drivers that normally would require privleged access without. There are also a range of other benefits to the use of spack that will be discussed in this course. 
 
