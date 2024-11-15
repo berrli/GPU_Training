@@ -1,12 +1,14 @@
 .responsive-container {
     position: relative;
-
+    width: 100%;
+    max-width: 800px; /* Adjust this as needed */
+    margin: 0 auto; /* Centers the container */
 }
 
 .responsive-container iframe,
 .responsive-container embed,
 .responsive-container object {
-    position: absolute;
+    position: absolute
     width: 100%;
     height: 100%;
 }
