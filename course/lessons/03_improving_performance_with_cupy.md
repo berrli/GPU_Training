@@ -71,7 +71,7 @@ Visualizing a 2D temperature slice in an interactive HTML file, allowing for a t
 poetry run visualise_slice --target_depth 0 --animation_speed 100
 ```
 
-The command above will create an interactive HTML file, that will have each timestep in the animation last for 100 milliseconds (`--animation_speed`) at the nearest depth to the closest depth (`--target_depth`), in this case 47.37m. For the above command the output producded will be: 
+The command above will create an interactive HTML file, that will have each timestep in the animation last for 100 milliseconds (`--animation_speed`) at the nearest depth to the closest depth (`--target_depth`), in this case 0.49m. For the above command the output producded will be: 
 
 <div class="responsive-container">
     --8<-- "course/_static/temperature_slice.html"
