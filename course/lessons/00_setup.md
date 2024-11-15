@@ -1,4 +1,7 @@
-
+---
+hide:
+  - toc
+---
 
 # Installation Instructions 
 
@@ -70,6 +73,53 @@ poetry install
 
 !!! note
     You can check that the installation has been successful by running `poetry run cuda_check`, which should return the number of CUDA devices that are currently avaiable, such as `Number of CUDA devices: 1`. If you want to find out more information about the device that is connected you can run a command such as `nvidia-smi` for a NVIDIA GPU.
+
+# Data
+
+## Data Download
+
+To download the dataset, follow these steps:
+
+- **Create a Copernicus Marine Account**:
+   - You will need an account to access the data. Register here: [Register for Account](https://data.marine.copernicus.eu/register?redirect=%2Fproduct%2FGLOBAL_ANALYSISFORECAST_PHY_001_024%2Fdownload%3Fdataset%3Dcmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_202406).
+
+-  **Run the CLI Command to Download the Dataset**:
+   - Use the following command to download the subset of data:
+     ```bash
+     poetry run download_data
+     ```
+   - This command will prompt you to enter your username and password. Once authenticated, the data file will download to the data directory. Please note that the download may take some time as the file size is approximately 250 MB.
+
+## Data Description 
+
+The dataset used during the course is based on 3-Dimensional Ocean Temperatures. The dataset is described in detail on the [Copernicus Marine Data Service](https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description)
+
+**Filename**: `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_1730799065517.nc`
+
+**Description**:  
+This dataset was downloaded from the **Global Ocean Physics Analysis and Forecast** service. It provides data for global ocean physics, focusing on sea water potential temperature.
+
+- **Product Identifier**: `GLOBAL_ANALYSISFORECAST_PHY_001_024`
+- **Product Name**: Global Ocean Physics Analysis and Forecast
+- **Dataset Identifier**: `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i`
+
+**Variable Visualized**:  
+- **Sea Water Potential Temperature (thetao)**: Measured in degrees Celsius [°C].
+
+**Geographical Area of Interest**:  
+- **Region**: Around the United Kingdom
+- **Coordinates**:
+  - **Northern Latitude**: 65.312
+  - **Eastern Longitude**: 6.1860
+  - **Southern Latitude**: 46.829
+  - **Western Longitude**: -13.90
+
+**Depth Range**:  
+- **Minimum Depth**: 0.49 meters  
+- **Maximum Depth**: 5727.9 meters
+
+**File Size**:  
+- **267.5 MB**
 
 ## Helpful Auxiliary Software
 
@@ -144,51 +194,6 @@ As this course produces 3D outputs, some supporting code will generate interacti
 - As you edit and save your HTML, CSS, or JavaScript files, the browser will automatically refresh to display your changes.
 - This eliminates the need to manually refresh the browser, speeding up development.
 
-# Data
 
-## Data Download
-
-To download the dataset, follow these steps:
-
-- **Create a Copernicus Marine Account**:
-   - You will need an account to access the data. Register here: [Register for Account](https://data.marine.copernicus.eu/register?redirect=%2Fproduct%2FGLOBAL_ANALYSISFORECAST_PHY_001_024%2Fdownload%3Fdataset%3Dcmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_202406).
-
--  **Run the CLI Command to Download the Dataset**:
-   - Use the following command to download the subset of data:
-     ```bash
-     poetry run download_data
-     ```
-   - This command will prompt you to enter your username and password. Once authenticated, the data file will download to the data directory. Please note that the download may take some time as the file size is approximately 250 MB.
-
-## Data Description 
-
-The dataset used during the course is based on 3-Dimensional Ocean Temperatures. The dataset is described in detail on the [Copernicus Marine Data Service](https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description)
-
-**Filename**: `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_1730799065517.nc`
-
-**Description**:  
-This dataset was downloaded from the **Global Ocean Physics Analysis and Forecast** service. It provides data for global ocean physics, focusing on sea water potential temperature.
-
-- **Product Identifier**: `GLOBAL_ANALYSISFORECAST_PHY_001_024`
-- **Product Name**: Global Ocean Physics Analysis and Forecast
-- **Dataset Identifier**: `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i`
-
-**Variable Visualized**:  
-- **Sea Water Potential Temperature (thetao)**: Measured in degrees Celsius [°C].
-
-**Geographical Area of Interest**:  
-- **Region**: Around the United Kingdom
-- **Coordinates**:
-  - **Northern Latitude**: 65.312
-  - **Eastern Longitude**: 6.1860
-  - **Southern Latitude**: 46.829
-  - **Western Longitude**: -13.90
-
-**Depth Range**:  
-- **Minimum Depth**: 0.49 meters  
-- **Maximum Depth**: 5727.9 meters
-
-**File Size**:  
-- **267.5 MB**
 
 

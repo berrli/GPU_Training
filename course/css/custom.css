@@ -1,0 +1,12 @@
+.responsive-container {
+    position: relative;
+
+}
+
+.responsive-container iframe,
+.responsive-container embed,
+.responsive-container object {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}

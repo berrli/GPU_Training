@@ -17,9 +17,10 @@ copernicusmarine = "*"     # For Copernicus Marine Service data access
 tqdm = "*"
 mkdocs = "^1.6.1"
 mkdocs-material = "^9.5.44"
+pymdown-extensions = "^10.12"
 
 [tool.poetry.scripts]
-visualise_static = "content.support_scripts:visualisation_static"
+visualise_slice_static = "content.support_scripts:visualisation_static"
 visualise_slice = "content.support_scripts:visualisation_slice"
 visualise_cube = "content.support_scripts:visualisation_cube"
 summary =  "content.support_scripts:summary"

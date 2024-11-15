@@ -3,21 +3,30 @@ theme:
   name: "material"
   features:
     - content.code.copy  # Enable copy button on code blocks
+    - navigation.tabs: false  # Enable full-width layout
   palette:
     primary: "indigo"
     accent: "indigo"
   code:
     highlight: "github-dark"  # Customize code syntax highlighting
+extra_css:
+  - css/custom.css
 markdown_extensions:
   - admonition            # Enables admonition boxes
   - pymdownx.extra
   - pymdownx.superfences
   - pymdownx.details      # Optional: Adds collapsible sections
   - pymdownx.highlight    # Optional: Enhances code highlighting
+  - pymdownx.snippets:
+      check_paths: true   # Enables Snippets extension with path checking
+
 docs_dir: course
+
 nav:
   - Home: index.md        # Adds index.md as the homepage
   - Setup: lessons/00_setup.md
   - Spack: lessons/01_spack.md
+  - NumPy and CuPy: lessons/02_numpy_and_cupy.md
+  - Leveraging GPUs: lessons/03_improving_performance_with_cupy.md
   - Tips and Tricks: tips_and_tricks.md
   - Spack Cheat Sheet: spack_cheat_sheet.md
