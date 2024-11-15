@@ -3,7 +3,7 @@ hide:
   - toc
 ---
 
-# Leveraging GPUs
+# Example Project Overview
 
 To highlight the difference between NumPy and CuPy, a 3D temperature diffusion model is used to highlight the difference in performance that can be achieved for computationally intensive tasks. 
 
@@ -79,6 +79,8 @@ The command above will create an interactive HTML file, that will have each time
 
 <center>[View Plot in Seperate Tab](../_static/temperature_slice.html)</center>
 
+When run within your own space the file produced will be `output/original_temperature_2d_interactive.html`.
+
 ### Visualise Cube - Interactive HTML file
 
 Visualizing a 3D temperature slice in an interactive HTML file, allowing for a time series to be visualised. 
@@ -87,15 +89,15 @@ Visualizing a 3D temperature slice in an interactive HTML file, allowing for a t
 poetry run visualise_cube --num_depths 5 --num_time_steps 3
 ```
 
-
 The command above will create an interactive HTML file, that will visualise the first 5 depth, for 3 time steps. For the above command the output producded will be: 
 
 <div class="responsive-container">
     --8<-- "course/_static/temperature_cube.html"
 </div>
 
-
 <center>[View Plot in Seperate Tab](../_static/temperature_cube.html)</center>
+
+When run within your own space the file produced will be `output/original_temperature_3d_interactive.html`.
 
 ## Summarising Data 
 

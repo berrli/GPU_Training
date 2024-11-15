@@ -27,6 +27,7 @@ nav:
   - Setup: lessons/00_setup.md
   - Spack: lessons/01_spack.md
   - NumPy and CuPy: lessons/02_numpy_and_cupy.md
-  - Leveraging GPUs: lessons/03_improving_performance_with_cupy.md
+  - Example Project Overview: lessons/03_improving_performance_with_cupy.md
+  - Leveraging GPUs: lessons/04_running_models.md
   - Tips and Tricks: tips_and_tricks.md
   - Spack Cheat Sheet: spack_cheat_sheet.md
