@@ -31,13 +31,13 @@ source spack/share/spack/setup-env.sh
 !!! note
     You can check that spack has been successfully installed by running `spack --version` which should return the version of spack that you have available. 
 
-You will need need to create a spack environment, which can be done with the following, creating a spack environment named "cuda_course"
+You will need need to create a spack environment, which can be done with the following, creating a spack environment named "gpu_course"
 ```bash 
-spack env create cuda_course
+spack env create gpu_course
 ```
 which can then be activated with
 ```bash 
-spack env activate -p cuda_course
+spack env activate -p gpu_course
 ```
 
 In this course, spack is being used to install system level requirements, and so the required version of python and the needed driver of CUDA are installed via spack, with the following two commands. 
