@@ -15,9 +15,7 @@ plotly = "^5.15.0"         # For interactive plotting and HTML export
 cupy-cuda12x = "*"         # For CUDA support with CuPy
 copernicusmarine = "*"     # For Copernicus Marine Service data access
 tqdm = "*"
-mkdocs = "^1.6.1"
-mkdocs-material = "^9.5.44"
-pymdown-extensions = "^10.12"
+jupyter-book = "^1.0.0"
 
 [tool.poetry.scripts]
 visualise_slice_static = "content.support_scripts:visualisation_static"
