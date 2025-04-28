@@ -1,0 +1,13 @@
+# _toc.yml
+format: jb-book
+root: README.md
+
+parts:
+  - caption: Lessons
+    chapters:
+      - file: lessons/theory
+      - file: lessons/spack
+      - file: lessons/slurm
+      - file: lessons/conways_game_of_life
+      - file: lessons/profiling
+      - file: lessons/temperature_diffusion

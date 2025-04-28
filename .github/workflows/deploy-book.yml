@@ -1,0 +1,57 @@
+name: Deploy Book
+
+# Run on push to main branch, on a schedule, and allow manual trigger
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # Runs at 1 AM UTC every day
+    - cron: '0 1 * * *'
+  workflow_dispatch:  # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  deploy-book:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+    - uses: actions/checkout@v3
+
+    # Install dependencies
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Install dependencies
+      run: |
+        poetry install
+
+    # (optional) Cache your executed notebooks between runs
+    - name: Cache executed notebooks
+      uses: actions/cache@v4
+      with:
+        path: _build/.jupyter_cache
+        key: jupyter-book-cache-${{ hashFiles('pyproject.toml') }}
+
+    # Build the book
+    - name: Build the book
+      run: |
+        poetry run jupyter-book build .
+
+    # Upload the book's HTML as an artifact
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: "_build/html"
+
+    # Deploy the book's HTML to GitHub Pages
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

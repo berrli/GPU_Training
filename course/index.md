@@ -1,1 +1,0 @@
-Welcome to this GPU Training Course.
