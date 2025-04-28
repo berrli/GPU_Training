@@ -9,6 +9,12 @@ author: Liam J Berrisford
 execute:
   execute_notebooks: force
 
+# _config.yml
+sphinx:
+  config:
+    html_extra_path:
+      - _static/
+
 # Define the name of the latex output file for PDF builds
 latex:
   latex_documents:
