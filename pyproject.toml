@@ -24,8 +24,13 @@ visualise_cube = "content.support_scripts:visualisation_cube"
 summary =  "content.support_scripts:summary"
 cuda_check = "content.support_scripts:cuda_check"
 download_data = "content.support_scripts:download_ocean_data"
-diffusion_cupy = "content.python_gpu_diffusion:run_diffusion_cupy"
-diffusion_numpy = "content.python_gpu_diffusion:run_diffusion_numpy"
+diffusion_cupy = "content.temperature_diffusion:run_diffusion_cupy"
+diffusion_pure_python = "content.temperature_diffusion:run_diffusion_purepython"
+diffusion_numpy = "content.temperature_diffusion:run_diffusion_numpy"
+game_of_life_cpu = "content.game_of_life:run_life_numpy"
+game_of_life_gpu = "content.game_of_life:run_life_cupy"
+game_of_life_naive = "content.game_of_life:run_life_naive"
+
 
 [build-system]
 requires = ["poetry-core"]
