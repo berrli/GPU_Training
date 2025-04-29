@@ -2,31 +2,37 @@
 
 The following provides the steps that are required to install the necessary compilers and packages to engage with the material in this course.
 
+```{important}
+Please keep in mind that nearly all of the commands used in this section will be covered in detail within the course itself. They are included here to make sure you have all of the necessary resources (e.g. a GPU and relevant compilers) to complete the whole course. **The intention is for you to run these commands and confirm the output based on the contents of this page, not to completely understand each step you are taking.** If you do get stuck and are unsure of how to proceed, please reach out to the authors, and we can help you debug. 
+
+If you are self-studying, then please read the section "Project: Conway's Game of Life - CPU vs GPU Implementation" to understand more about the commands that are being used. If you are taking the workshop, then these commands are here to make sure that you are able to run code on the designated platform to save time in the workshop and identify any permission errors when accessing the needed resources. 
+```
+
 ## Clone the Repo 
 
-To engage with all of the content within this GPU Training course you will need to clone the repo, which can be done with 
+To engage with all of the content within this GPU Training course, you will need to clone the repo, which can be done with 
 
 ``` bash 
 git clone https://github.com/berrli/GPU_Training
 ```
 
-
 ## Spack - Installing system-level requirements
-Within this course [Spack](https://spack.io/) is being used to manage the system-level requirements, such as drivers. The reason for this is that alot of system-level requirements generally require priveleged permissions, such as the access to use of `sudo`. However as alot of the platforms that have GPUs available are HPC platforms, spack allows us to install drivers that normally would require privleged access without. There are also a range of other benefits to the use of spack that will be discussed in this course. 
 
-First you will need to clone the spack repo:
+Within this course, [Spack](https://spack.io/) is being used to manage system-level requirements, such as drivers. The reason for this is that a lot of system-level requirements generally require privileged permissions, such as access to `sudo`. However, as a lot of the platforms that have GPUs available are HPC platforms, `spack` allows us to install drivers that normally would require privileged access. There are also a range of other benefits to the use of `spack` that will be discussed in this course. 
+
+First, you will need to clone the `spack` repo:
 ``` bash
 git clone https://github.com/spack/spack.git
 ```
-
-You will then need to activate spack with:
+You will then need to activate `spack` with:
 ```bash 
 source spack/share/spack/setup-env.sh
 ```
-!!! note
-    You can check that spack has been successfully installed by running `spack --version` which should return the version of spack that you have available. 
+```{note}
+You can check that `spack` has been successfully installed by running `spack --version`, which should return the version of spack that you have available. 
+```
 
-You will need need to create a spack environment, which can be done with the following, creating a spack environment named "gpu_course"
+You will need need to create a spack environment, which can be done with the following, creating a `spack` environment named "gpu_course":
 ```bash 
 spack env create gpu_course
 ```
@@ -35,43 +41,55 @@ which can then be activated with
 spack env activate -p gpu_course
 ```
 
-In this course, spack is being used to install system level requirements, and so the required version of python and the needed driver of CUDA are installed via spack, with the following two commands. 
+In this course, spack is being used to install system-level requirements, and so the required version of Python and the needed driver of CUDA are installed via spack with the following two commands. 
 ```bash
 spack add python@3.12 
 spack add cuda
 ```
-!!! note
-    This step will simply say that you intend to install these packages, at this time spack is still waiting for more packages to be added to the environment specification. We can check what the current specification is (e.g. package list, dependecies, compilers to be used etc.) with `spack spec`.
+```{note}
+This step will simply say that you intend to install these packages; at this time, `spack` is still waiting for more packages to be added to the environment specification. We can check what the current specification is (e.g. package list, dependencies, compilers to be used etc.) with `spack spec`.
+```
 
-
-Finally we are able to install all of the pakcages into out spack environment with 
+Finally, we are able to install all of the packages into our `spack` environment with 
 ```bash 
 spack install
 ```
 
-!!! note
-    The `.spack` directory is a hidden folder in your home directory that stores user-level configuration data, caches, and environment settings for Spack. It helps Spack remember things like what packages you have installed, which mirrors you have configured, and any custom settings you have applied. Sometimes, these configuration files or caches can become outdated or inconsistent—especially if you have been experimenting with different environments, modifying package recipes, or changing Spack versions. When a “weird” or hard-to-troubleshoot error occurs, one way to rule out bad configuration or cache data is to remove the .spack directory. By doing so, you essentially give Spack a clean slate: it will recreate the directory and its necessary files the next time it runs, which often resolves mysterious issues stemming from old or corrupted data. If you try to get a clean slate for spack from just removing the non-hidden `spack` directory then it will likely not be a clean slate and the previous experimentations data will still be present. 
+```{note}
+The `.spack` directory is a hidden folder in your home directory that stores user-level configuration data, caches, and environment settings for Spack. It helps Spack remember things like what packages you have installed, which mirrors you have configured, and any custom settings you have applied. Sometimes, these configuration files or caches can become outdated or inconsistent, especially if you have been experimenting with different environments, modifying package recipes, or changing `spack` versions. When a "weird" or hard-to-troubleshoot error occurs, one way to rule out bad configuration or cache data is to remove the `.spack` directory. By doing so, you essentially give Spack a clean slate: it will recreate the directory and its necessary files the next time it runs, which often resolves mysterious issues stemming from old or corrupted data. If you try to get a clean slate for spack by just removing the non-hidden `spack` directory, then it will likely not be a clean slate, and the previous experimentations data will still be present. 
+```
 
 ## Poetry - Installing user-level requirements
 
 Within this course, [Poetry](https://python-poetry.org/) is used to manage the user-level requirements. 
 
-Poetry can be installed by the following command: 
+The following command will install poetry: 
 ```bash 
 curl -sSL https://install.python-poetry.org | python3 -
 ```
-!!! note
-    Poetry can be uninstalled with `curl -sSL https://install.python-poetry.org | python3 - --uninstall`.
+```{note}
+Poetry can be uninstalled with `curl -sSL https://install.python-poetry.org | python3 - --uninstall`.
+```
+
+```{note}
+`poetry install` needs to be run from within the training course repo. If you haven't, then you need to clone this repo with `git clone https://github.com/berrli/GPU_Training` and then navigate to its root with `cd GPU_Training`
+```
 
 All of the user-level requirements can be installed via Poetry with the command:
 ```bash
 poetry install
 ```
-!!! note 
-    `poetry install` needs to be ran from within the training course repo. If you havnt then you need to clone this repo with `git clone https://github.com/berrli/GPU_Training` and then navigate to its root with `cd GPU_Training`
 
-!!! note
-    You can check that the installation has been successful by running `poetry run cuda_check`, which should return the number of CUDA devices that are currently avaiable, such as `Number of CUDA devices: 1`. If you want to find out more information about the device that is connected you can run a command such as `nvidia-smi` for a NVIDIA GPU.
+
+`````{admonition} IMPORTANT: If running locally...
+:class: important
+You can check that the installation has been successful by running `poetry run cuda_check`, which should return the number of CUDA devices that are currently available, such as `Number of CUDA devices: 1`. If you want to find out more information about the device that is connected, you can run a command such as `nvidia-semi` for an NVIDIA GPU.
+`````
+
+`````{admonition} IMPORTANT: If running on a HPC...
+:class: important
+-- Details of how to run on a HPC with a submit script. ---
+`````
 
 # Data
 
@@ -91,12 +109,12 @@ To download the dataset, follow these steps:
 
 ## Data Description 
 
-The dataset used during the course is based on 3-Dimensional Ocean Temperatures. The dataset is described in detail on the [Copernicus Marine Data Service](https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description)
+The dataset used during the course is based on 3-dimensional Ocean Temperatures. The dataset is described in detail on the [Copernicus Marine Data Service](https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description)
 
 **Filename**: `cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_1730799065517.nc`
 
 **Description**:  
-This dataset was downloaded from the **Global Ocean Physics Analysis and Forecast** service. It provides data for global ocean physics, focusing on sea water potential temperature.
+This dataset was downloaded from the **Global Ocean Physics Analysis and Forecast** service. It provides data for global ocean physics, focusing on seawater potential temperature.
 
 - **Product Identifier**: `GLOBAL_ANALYSISFORECAST_PHY_001_024`
 - **Product Name**: Global Ocean Physics Analysis and Forecast
@@ -122,7 +140,7 @@ This dataset was downloaded from the **Global Ocean Physics Analysis and Forecas
 
 ## Helpful Auxiliary Software
 
-This section details a number of different useful pieces of software for making the development of GPU code easier. Notably alot of these sit within Visual Studio Code, chosen as these are what the author was exposed to when first starting out in GPU development. 
+This section details a number of useful pieces of software that make the development of GPU code easier. Notably, a lot of these sit within Visual Studio Code, chosen as these are what the author was exposed to when first starting in GPU development. 
 
 ### Using Visual Studio Code (VSCode)
 
@@ -169,7 +187,7 @@ Ensure you can SSH into the remote machine from your terminal. If SSH is not alr
 
 ##### Connecting to remote from within VSCode
 
-You should now be able to connect to the remote machine from within VSCode but using `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac) and then selecting `Remote-SSH: Connect to host...` which should then present a list with the name of the machien you gave in the config file, in the above case `my-remote-machine`. You will then be asked for a password if you protected your ssh key. Once connected a new VSCode window will be created and you should have a fully functioning ID on the remote machine.
+You should now be able to connect to the remote machine from within VSCode but using `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac) and then selecting `Remote-SSH: Connect to host...` which should then present a list with the name of the machine you gave in the config file, in the above case `my-remote-machine`. You will then be asked for a password if you protected your ssh key. Once connected, a new VSCode window will be created, and you should have a fully functioning ID on the remote machine.
 
 
 #### Live Server 
@@ -191,7 +209,7 @@ As this course produces 3D outputs, some supporting code will generate interacti
 ##### View Changes in Real-Time
 
 - As you edit and save your HTML, CSS, or JavaScript files, the browser will automatically refresh to display your changes.
-- This eliminates the need to manually refresh the browser, speeding up development.
+- This eliminates the need to manually refresh the browser manually, speeding up development.
 
 
 

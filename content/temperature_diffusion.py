@@ -224,9 +224,6 @@ def temperature_diffusion_cupy(data, num_timesteps, diffusion_coeff=0.5):
     print(f"CuPy model completed in {sum(timestep_durations):.4f} seconds. "
           f"Average time per timestep: {avg_time_per_timestep:.4f} seconds.")
 
-
-
-
     
 def run_diffusion_cupy():
     parser = argparse.ArgumentParser(description="Run 3D Diffusion Model with CuPy")
@@ -236,3 +233,95 @@ def run_diffusion_cupy():
 
     # Pass parsed arguments to visualisation_slice
     temperature_diffusion_cupy(data=load_data(), num_timesteps=args.num_timesteps)
+
+
+def temperature_diffusion_purepython(data, num_timesteps, diffusion_coeff=0.1):
+    # Pull raw array and get dims
+    raw = data['thetao'].values              # shape (time, depth, lat, lon)
+    depth, lat, lon = raw.shape[1], raw.shape[2], raw.shape[3]
+
+    # Initial snapshot at t=0, as Python lists
+    initial = raw[0]                         # shape (depth, lat, lon)
+    temperature = []
+    for _ in range(num_timesteps):
+        # deep copy initial for each timestep
+        plane = []
+        for d in range(depth):
+            plane.append([ [ float(initial[d][i][j]) for j in range(lon) ]
+                           for i in range(lat) ])
+        temperature.append(plane)
+
+    # Summary stats (very slow!)
+    flat = []
+    for t in range(num_timesteps):
+        for d in range(depth):
+            for i in range(lat):
+                for j in range(lon):
+                    v = temperature[t][d][i][j]
+                    if not math.isnan(v):
+                        flat.append(v)
+    flat_sorted = sorted(flat)
+    summary = {
+        "mean": sum(flat)/len(flat),
+        "min": flat_sorted[0],
+        "max": flat_sorted[-1],
+        "median": flat_sorted[len(flat_sorted)//2],
+    }
+    print("Summary:", summary)
+
+    # Precompute mask of valid ocean points
+    mask = [[[ [ not math.isnan(temperature[t][d][i][j])
+                 for j in range(lon) ]
+               for i in range(lat) ]
+             for d in range(depth) ]
+           for t in range(num_timesteps)]
+
+    # Prepare output buffer
+    new_temperature = copy.deepcopy(temperature)
+    timestep_durations = []
+
+    # Diffusion loop
+    for t in range(num_timesteps):
+        start = time.time()
+        for d in range(1, depth-1):
+            for i in range(1, lat-1):
+                for j in range(1, lon-1):
+                    if mask[t][d][i][j]:
+                        center = temperature[t][d][i][j]
+                        total = 0.0
+                        count = 0
+                        # 6 neighbors
+                        for dd, ii, jj in (
+                            (d-1,i,j), (d+1,i,j),
+                            (d,i-1,j), (d,i+1,j),
+                            (d,i,j-1), (d,i,j+1)
+                        ):
+                            if mask[t][dd][ii][jj]:
+                                total += temperature[t][dd][ii][jj]
+                                count += 1
+                        # apply diffusion
+                        if count > 0:
+                            delta = diffusion_coeff * (total - count*center) / count
+                        else:
+                            delta = 0.0
+                        new_temperature[t][d][i][j] = center + delta
+        timestep_durations.append(time.time() - start)
+        # copy new → temperature for next step
+        temperature[t] = copy.deepcopy(new_temperature[t])
+
+    # Convert to NumPy array for saving
+    import numpy as _np
+    final = _np.array(new_temperature)
+
+    # Save result
+    save_to_netcdf(data, final, OUTPUT_DIR / OUTPUT_FILE_PUREPYTHON, num_timesteps)
+
+    total = sum(timestep_durations)
+    avg = total / num_timesteps
+    print(f"Pure‐Python diffusion done in {total:.4f}s, avg {avg:.4f}s per step.")
+
+def run_diffusion_purepython():
+    parser = argparse.ArgumentParser(description="Run 3D Diffusion Model in pure Python")
+    parser.add_argument("--num_timesteps", type=int, default=300, help="Number of Timesteps")
+    args = parser.parse_args()
+    temperature_diffusion_purepython(data=load_data(), num_timesteps=args.num_timesteps)
