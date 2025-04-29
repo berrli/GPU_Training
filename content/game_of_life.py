@@ -120,33 +120,57 @@ def run_life_numpy():
     p = argparse.ArgumentParser("Game of Life (NumPy)")
     p.add_argument("--size",      type=int, default=100, help="Grid dimension (N×N)")
     p.add_argument("--timesteps", type=int, default=50,  help="Number of generations")
+    p.add_argument("--save-gif",  action="store_true",   help="Save GIF animation")
     args = p.parse_args()
 
+    print(f"[NumPy] Args received: {args}")
+
     history = simulate_life_numpy(args.size, args.timesteps)
-    output = Path("game_of_life_cpu.gif")
-    animate_life(history, output)
-    print(f"Saved CPU GIF to {output}")
+
+    if args.save_gif:
+        output = Path("game_of_life_cpu.gif")
+        animate_life(history, output)
+        print(f"Saved CPU GIF to {output}")
+    else:
+        print("[NumPy] GIF creation skipped.")
+
 
 
 def run_life_cupy():
     p = argparse.ArgumentParser("Game of Life (CuPy)")
     p.add_argument("--size",      type=int, default=100, help="Grid dimension (N×N)")
     p.add_argument("--timesteps", type=int, default=50,  help="Number of generations")
+    p.add_argument("--save-gif",  action="store_true",   help="Save GIF animation")
     args = p.parse_args()
 
+    print(f"[CuPy] Args received: {args}")
+
     history = simulate_life_cupy(args.size, args.timesteps)
-    output = Path("game_of_life_gpu.gif")
-    animate_life(history, output)
-    print(f"Saved GPU GIF to {output}")
+
+    if args.save_gif:
+        output = Path("game_of_life_gpu.gif")
+        animate_life(history, output)
+        print(f"Saved GPU GIF to {output}")
+    else:
+        print("[CuPy] GIF creation skipped.")
+
 
 
 def run_life_naive():
     p = argparse.ArgumentParser("Game of Life (Naive)")
     p.add_argument("--size",      type=int, default=100, help="Grid dimension (N×N)")
     p.add_argument("--timesteps", type=int, default=50,  help="Number of generations")
+    p.add_argument("--save-gif",  action="store_true",   help="Save GIF animation")
     args = p.parse_args()
 
+    print(f"[Naive] Args received: {args}")  
+
     history = simulate_life_naive(args.size, args.timesteps)
-    output = Path("game_of_life_naive.gif")
-    animate_life(history, output)
-    print(f"Saved Naive GIF to {output}")
+
+    if args.save_gif:
+        output = Path("game_of_life_naive.gif")
+        animate_life(history, output)
+        print(f"Saved Naive GIF to {output}")
+    else:
+        print("[Naive] GIF creation skipped.")
+
