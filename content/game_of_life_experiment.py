@@ -86,10 +86,10 @@ cpu_name = get_cpu_name().replace(" ", "_")
 methods = {
     "NumPy (CPU)": "game_of_life_cpu",
     "CuPy (GPU)": "game_of_life_gpu",
-    "Naive (CPU)": "game_of_life_naive",
+    #"Naive (CPU)": "game_of_life_naive",
 }
 
-grid_sizes = [50, 100]
+grid_sizes = [50, 100, 250, 500, 1000, 2500, 5000, 10000]
 timesteps_list = [100]   # you can expand this list
 repeats = 3
 
