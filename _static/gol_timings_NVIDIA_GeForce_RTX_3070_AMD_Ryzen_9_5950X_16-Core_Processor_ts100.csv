@@ -1,0 +1,7 @@
+gpu,cpu,method,grid_size,timesteps,mean_time_sec,std_dev_sec
+NVIDIA_GeForce_RTX_3070,AMD_Ryzen_9_5950X_16-Core_Processor,NumPy (CPU),50,100,3.495720,0.044822
+NVIDIA_GeForce_RTX_3070,AMD_Ryzen_9_5950X_16-Core_Processor,CuPy (GPU),50,100,4.241037,0.097751
+NVIDIA_GeForce_RTX_3070,AMD_Ryzen_9_5950X_16-Core_Processor,Naive (CPU),50,100,4.059305,0.010148
+NVIDIA_GeForce_RTX_3070,AMD_Ryzen_9_5950X_16-Core_Processor,NumPy (CPU),100,100,3.591343,0.074643
+NVIDIA_GeForce_RTX_3070,AMD_Ryzen_9_5950X_16-Core_Processor,CuPy (GPU),100,100,4.274193,0.053729
+NVIDIA_GeForce_RTX_3070,AMD_Ryzen_9_5950X_16-Core_Processor,Naive (CPU),100,100,5.887778,0.078205
