@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
 import argparse
 from pathlib import Path
 
 import numpy as np
 import cupy as cp
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1) Core update functions (no plotting/animation)
@@ -59,29 +61,32 @@ def life_step_naive(grid: np.ndarray) -> np.ndarray:
 # 2) Simulation functions (no animation)
 # ─────────────────────────────────────────────────────────────────────────────
 
-def simulate_life_numpy(N: int, timesteps: int, p_alive: float = 0.2):
-    grid = np.random.choice([0, 1], size=(N, N), p=[1-p_alive, p_alive])
-    history = []
+def simulate_life_numpy(N: int, timesteps: int, p_alive: float = 0.2, record_history: bool = False):
+    grid = np.random.choice([0, 1], size=(N, N), p=[1 - p_alive, p_alive])
+    history = [] if record_history else None
     for _ in range(timesteps):
-        history.append(grid.copy())
+        if record_history:
+            history.append(grid.copy())
         grid = life_step_numpy(grid)
     return history
 
 
-def simulate_life_cupy(N: int, timesteps: int, p_alive: float = 0.2):
+def simulate_life_cupy(N: int, timesteps: int, p_alive: float = 0.2, record_history: bool = False):
     grid_gpu = (cp.random.random((N, N)) < p_alive).astype(cp.int32)
-    history = []
+    history = [] if record_history else None
     for _ in range(timesteps):
-        history.append(cp.asnumpy(grid_gpu))
+        if record_history:
+            history.append(cp.asnumpy(grid_gpu))
         grid_gpu = life_step_gpu(grid_gpu)
     return history
 
 
-def simulate_life_naive(N: int, timesteps: int, p_alive: float = 0.2):
-    grid = np.random.choice([0, 1], size=(N, N), p=[1-p_alive, p_alive])
-    history = []
+def simulate_life_naive(N: int, timesteps: int, p_alive: float = 0.2, record_history: bool = False):
+    grid = np.random.choice([0, 1], size=(N, N), p=[1 - p_alive, p_alive])
+    history = [] if record_history else None
     for _ in range(timesteps):
-        history.append(grid.copy())
+        if record_history:
+            history.append(grid.copy())
         grid = life_step_naive(grid)
     return history
 
@@ -113,7 +118,7 @@ def animate_life(history, output_file: Path, interval: int = 200, dpi: int = 80)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 4) CLI entry-points (only --size and --timesteps)
+# 4) CLI entry-points (only --size, --timesteps, --save-gif)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def run_life_numpy():
@@ -124,16 +129,18 @@ def run_life_numpy():
     args = p.parse_args()
 
     print(f"[NumPy] Args received: {args}")
-
-    history = simulate_life_numpy(args.size, args.timesteps)
+    record = args.save_gif and args.size <= 100
+    history = simulate_life_numpy(args.size, args.timesteps, record_history=record)
 
     if args.save_gif:
-        output = Path("game_of_life_cpu.gif")
-        animate_life(history, output)
-        print(f"Saved CPU GIF to {output}")
+        if record:
+            output = Path("game_of_life_cpu.gif")
+            animate_life(history, output)
+            print(f"Saved CPU GIF to {output}")
+        else:
+            print("[NumPy] Problem size > 100: cannot save history or create GIF.")
     else:
-        print("[NumPy] GIF creation skipped.")
-
+        print("[NumPy] GIF creation skipped; history not saved.")
 
 
 def run_life_cupy():
@@ -144,16 +151,18 @@ def run_life_cupy():
     args = p.parse_args()
 
     print(f"[CuPy] Args received: {args}")
-
-    history = simulate_life_cupy(args.size, args.timesteps)
+    record = args.save_gif and args.size <= 100
+    history = simulate_life_cupy(args.size, args.timesteps, record_history=record)
 
     if args.save_gif:
-        output = Path("game_of_life_gpu.gif")
-        animate_life(history, output)
-        print(f"Saved GPU GIF to {output}")
+        if record:
+            output = Path("game_of_life_gpu.gif")
+            animate_life(history, output)
+            print(f"Saved GPU GIF to {output}")
+        else:
+            print("[CuPy] Problem size > 100: cannot save history or create GIF.")
     else:
-        print("[CuPy] GIF creation skipped.")
-
+        print("[CuPy] GIF creation skipped; history not saved.")
 
 
 def run_life_naive():
@@ -163,14 +172,16 @@ def run_life_naive():
     p.add_argument("--save-gif",  action="store_true",   help="Save GIF animation")
     args = p.parse_args()
 
-    print(f"[Naive] Args received: {args}")  
-
-    history = simulate_life_naive(args.size, args.timesteps)
+    print(f"[Naive] Args received: {args}")
+    record = args.save_gif and args.size <= 100
+    history = simulate_life_naive(args.size, args.timesteps, record_history=record)
 
     if args.save_gif:
-        output = Path("game_of_life_naive.gif")
-        animate_life(history, output)
-        print(f"Saved Naive GIF to {output}")
+        if record:
+            output = Path("game_of_life_naive.gif")
+            animate_life(history, output)
+            print(f"Saved Naive GIF to {output}")
+        else:
+            print("[Naive] Problem size > 100: cannot save history or create GIF.")
     else:
-        print("[Naive] GIF creation skipped.")
-
+        print("[Naive] GIF creation skipped; history not saved.")
