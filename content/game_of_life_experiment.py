@@ -6,7 +6,8 @@ import csv
 import matplotlib.pyplot as plt
 
 # Ensure output directory exists
-os.makedirs("../_static", exist_ok=True)
+out_dir = "../_static"
+os.makedirs(out_dir, exist_ok=True)
 
 def get_gpu_name():
     try:
@@ -29,12 +30,8 @@ def get_cpu_name():
     return "Unknown_CPU"
 
 def plot_timings(csv_filename):
-    """
-    Reads the CSV at csv_filename and reconstructs the error-bar plot:
-    - x axis: grid_size
-    - y axis: mean_time_sec, with yerr=std_dev_sec
-    Saves a PNG with the same base name as the CSV.
-    """
+    # (… same as before …)
+
     # Read data back in
     data = {}
     timesteps = None
@@ -45,14 +42,12 @@ def plot_timings(csv_filename):
             size = int(row["grid_size"])
             mean_t = float(row["mean_time_sec"])
             std_t = float(row["std_dev_sec"])
-            timesteps = row["timesteps"]  # same for every row
-            if method not in data:
-                data[method] = {"sizes": [], "means": [], "stds": []}
+            timesteps = row["timesteps"]
+            data.setdefault(method, {"sizes": [], "means": [], "stds": []})
             data[method]["sizes"].append(size)
             data[method]["means"].append(mean_t)
             data[method]["stds"].append(std_t)
 
-    # Make the plot
     plt.figure(figsize=(10, 6))
     for method, vals in data.items():
         plt.errorbar(
@@ -70,7 +65,7 @@ def plot_timings(csv_filename):
     plt.grid(True)
     plt.tight_layout()
 
-    # Save the figure next to the CSV, with .png extension
+    # Save PNG next to CSV
     base = os.path.splitext(os.path.basename(csv_filename))[0]
     out_png = os.path.join(os.path.dirname(csv_filename), f"{base}.png")
     plt.savefig(out_png, dpi=300)
@@ -85,16 +80,26 @@ cpu_name = get_cpu_name().replace(" ", "_")
 
 methods = {
     "NumPy (CPU)": "game_of_life_cpu",
-    "CuPy (GPU)": "game_of_life_gpu",
-    #"Naive (CPU)": "game_of_life_naive",
+    "CuPy (GPU)":  "game_of_life_gpu",
+    "Naive (CPU)": "game_of_life_naive",
 }
 
-grid_sizes = [50, 100, 250, 500, 1000, 2500, 5000, 10000]
+# Build an underscore-joined string of all entry-point names, sorted for consistency
+clean_names = [v.replace("game_of_life_", "") for v in methods.values()]
+method_ids  = "_".join(sorted(clean_names))
+
+#grid_sizes     = [50, 100, 250, 500, 1000, 2500, 5000, 10000]
+grid_sizes     = [50, 100, 250, 500, 1000]
 timesteps_list = [100]   # you can expand this list
-repeats = 3
+repeats         = 3
 
 for timesteps in timesteps_list:
-    csv_filename = f"../_static/gol_timings_{gpu_name}_{cpu_name}_ts{timesteps}.csv"
+    # Filename now includes GPU, CPU, all methods, and timesteps
+    csv_filename = os.path.join(
+        out_dir,
+        f"gol_timings_{gpu_name}_{cpu_name}_{method_ids}_ts{timesteps}.csv"
+    )
+
     with open(csv_filename, "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow([
@@ -120,7 +125,7 @@ for timesteps in timesteps_list:
                     run_times.append(t1 - t0)
 
                 mean_t = np.mean(run_times)
-                std_t = np.std(run_times)
+                std_t  = np.std(run_times)
                 writer.writerow([
                     gpu_name, cpu_name,
                     method_name,
@@ -131,5 +136,5 @@ for timesteps in timesteps_list:
 
     print(f"Saved CSV: {csv_filename}")
 
-    # Now generate the plot from that CSV
+    # Generate the plot from that CSV
     plot_timings(csv_filename)
