@@ -4,7 +4,7 @@
 
 Throughout this course, two guiding principles have been kept in mind:
 
-1) **Minimize setup friction**. Getting to the point where you can simply:
+1) **Complete Pipeline Approach**. Getting to the point where you can simply:
 
 ```python
 import cupy as cp
