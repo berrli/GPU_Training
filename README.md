@@ -88,7 +88,7 @@ You can check that the installation has been successful by running `poetry run c
 
 `````{admonition} IMPORTANT: If running on a HPC...
 :class: important
--- Details of how to run on a HPC with a submit script. ---
+If you are working on an HPC cluster via SLURM, submit the `cuda_check.slurm` script instead of running the commands directly. The script contain the same commands as above (e.g. `poetry run cuda_check` and `nvidia-smi`) that the `.slurm` script will run and store the output and errors in the files `out.log` and `err.log` respectively. 
 `````
 
 # Data
