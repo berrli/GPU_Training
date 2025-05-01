@@ -51,15 +51,6 @@ def temperature_diffusion_numpy(data, num_timesteps, diffusion_coeff=0.1):
     temperature = temperature[0:1, :, :, :]
     temperature = np.tile(temperature, (num_timesteps, 1, 1, 1))
     
-    # Summary statistics
-    summary = {
-        "mean": np.mean(temperature),
-        "min": np.min(temperature),
-        "max": np.max(temperature),
-        "median": np.median(temperature),
-    }
-    print(summary)
-    
     mask = ~np.isnan(temperature)  # Mask: True for ocean points, False for NaN regions (land)
     new_temperature = np.copy(temperature)
     timestep_durations = []
@@ -114,8 +105,6 @@ def temperature_diffusion_numpy(data, num_timesteps, diffusion_coeff=0.1):
         
     # Convert to final temperature and save
     final_temperature = new_temperature
-
-    print("The size of the final temperature is: " + str(final_temperature.shape))
     
     # Save to NetCDF (assuming you have a `save_to_netcdf` function defined)
     save_to_netcdf(data, final_temperature, DATA_DIR / OUTPUT_FILE_NUMPY, num_timesteps)
@@ -140,15 +129,7 @@ def temperature_diffusion_cupy(data, num_timesteps, diffusion_coeff=0.5):
     temperature = cp.asarray(data['thetao'].values)  # Convert to a CuPy array
     temperature = temperature[0:1, :, :, :]
     temperature = np.tile(temperature, (num_timesteps, 1, 1, 1))
-    # Summary statistics
-    summary = {
-        "mean": np.mean(temperature),
-        "min": np.min(temperature),
-        "max": np.max(temperature),
-        "median": np.median(temperature),
-    }
 
-    print(summary)
     mask = ~cp.isnan(temperature)  # Mask: True for ocean points, False for NaN regions (land)
     new_temperature = cp.copy(temperature)
     timestep_durations = []
@@ -203,18 +184,9 @@ def temperature_diffusion_cupy(data, num_timesteps, diffusion_coeff=0.5):
         temperature = new_temperature
 
         
-
-        # summary = {
-        # "mean": np.nanmean(temperature),
-        # "min": np.nanmin(temperature),
-        # "max": np.nanmax(temperature),
-        # "median": np.nanmedian(temperature),
-        # }
-        # print(summary)
     # Convert back to NumPy and save
     final_temperature = cp.asnumpy(new_temperature)
 
-    print("The size of the final temperature is: " + str(final_temperature.shape))
 
     save_to_netcdf(data, final_temperature, DATA_DIR / OUTPUT_FILE_CUPY, num_timesteps)
 
@@ -259,13 +231,6 @@ def temperature_diffusion_purepython(data, num_timesteps, diffusion_coeff=0.1):
                     if not math.isnan(v):
                         flat.append(v)
     flat_sorted = sorted(flat)
-    summary = {
-        "mean": sum(flat)/len(flat),
-        "min": flat_sorted[0],
-        "max": flat_sorted[-1],
-        "median": flat_sorted[len(flat_sorted)//2],
-    }
-    print("Summary:", summary)
 
     # Precompute mask of valid ocean points
     mask = [[[ [ not math.isnan(temperature[t][d][i][j])
@@ -316,7 +281,9 @@ def temperature_diffusion_purepython(data, num_timesteps, diffusion_coeff=0.1):
 
     total = sum(timestep_durations)
     avg = total / num_timesteps
-    print(f"Pure‐Python diffusion done in {total:.4f}s, avg {avg:.4f}s per step.")
+
+    print(f"PurePython model completed in {total:.4f} seconds. "
+          f"Average time per timestep: {avg:.4f} seconds.")
 
 def run_diffusion_purepython():
     parser = argparse.ArgumentParser(description="Run 3D Diffusion Model in pure Python")

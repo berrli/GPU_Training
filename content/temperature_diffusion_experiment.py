@@ -82,6 +82,7 @@ if __name__ == "__main__":
     }
 
     timesteps_list = [10, 25, 50, 100]
+    #timesteps_list = [3]
     repeats = 3
 
     csv_file = os.path.join(OUT_DIR, "temperature_diffusion_timings.csv")

@@ -71,7 +71,7 @@ def calculate_summary(data_file):
 
 def summary():
     parser = argparse.ArgumentParser(description="Calculate Summary Statistics for a datafile")
-    parser.add_argument("--data_file", type=str, default=ORIGINAL_DATA_FILE, help="Data file for visualisation.")
+    parser.add_argument("--data-file", type=str, default=ORIGINAL_DATA_FILE, help="Data file for visualisation.")
 
     args = parser.parse_args()
 
