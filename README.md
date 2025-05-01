@@ -1,4 +1,23 @@
-# Installation Instructions 
+# GPU Training Course
+
+## Course Philosophy
+
+Throughout this course, two guiding principles have been kept in mind:
+
+1) **Minimize setup friction**. Getting to the point where you can simply:
+
+```python
+import cupy as cp
+```
+ is far harder in the context of using GPUs than writing code for GPUs. 
+
+
+2) **Focus on practical GPU use**. This is a course about **using GPUs**, not about the low-level details of **programming GPUs**.
+
+By the end, you’ll have everything in place to leverage GPU acceleration immediately. We’ll walk you through installing the tools, configuring your environment, and running your first CUDA-powered code, so you can start leveraging the benefit of GPUs. 
+
+
+## Installation Instructions 
 
 The following provides the steps that are required to install the necessary compilers and packages to engage with the material in this course.
 
