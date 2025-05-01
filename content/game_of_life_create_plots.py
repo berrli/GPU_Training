@@ -3,10 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 1) Setup output folder
-os.makedirs('../_static', exist_ok=True)
+os.makedirs('../data', exist_ok=True)
 
 # 2) Load data
-files = glob.glob('../_static/gol_timings_*.csv')
+files = glob.glob('../data/gol_timings_*.csv')
 df = pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
 
 # 3) Method markers
@@ -78,7 +78,7 @@ def make_plot(grouped, title, fname, legend_args):
     )
     ax.legend(**legend_kwargs, **legend_args)
     fig.tight_layout(rect=[0,0,1,1])
-    fig.savefig(f"../_static/{fname}", bbox_inches='tight', dpi=300)
+    fig.savefig(f"../data/{fname}", bbox_inches='tight', dpi=300)
     plt.close(fig)
 
 # 8) Generate plots
@@ -120,4 +120,4 @@ make_plot(
     }
 )
 
-print("✅ All plots saved to ../_static with unique, color-blind-safe styles.") 
+print("✅ All plots saved to ../data") 
