@@ -6,7 +6,7 @@ import csv
 import matplotlib.pyplot as plt
 
 # Ensure output directory exists
-out_dir = "../_static"
+out_dir = "../output"
 os.makedirs(out_dir, exist_ok=True)
 
 def get_gpu_name():
@@ -89,7 +89,7 @@ clean_names = [v.replace("game_of_life_", "") for v in methods.values()]
 method_ids  = "_".join(sorted(clean_names))
 
 #grid_sizes     = [50, 100, 250, 500, 1000, 2500, 5000, 10000]
-grid_sizes     = [50, 100, 250, 500, 1000]
+grid_sizes     = [50, 100]
 timesteps_list = [100]   # you can expand this list
 repeats         = 3
 
