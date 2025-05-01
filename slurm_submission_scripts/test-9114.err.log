@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/shared/home/liam.berrisford/GPU_Training/content/game_of_life.py", line 155, in run_life_cupy
+    history = simulate_life_cupy(args.size, args.timesteps, record_history=record)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/shared/home/liam.berrisford/GPU_Training/content/game_of_life.py", line 80, in simulate_life_cupy
+    grid_gpu = life_step_gpu(grid_gpu)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/shared/home/liam.berrisford/GPU_Training/content/game_of_life.py", line 38, in life_step_gpu
+    return cp.where((neighbours == 3) | ((grid == 1) & (neighbours == 2)), 1, 0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/shared/home/liam.berrisford/.cache/pypoetry/virtualenvs/gpu_training_course-WCYLb1XO-py3.12/lib/python3.12/site-packages/cupy/_sorting/search.py", line 211, in where
+    return _where_ufunc(condition.astype('?'), x, y)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "cupy/_core/_kernel.pyx", line 1349, in cupy._core._kernel.ufunc.__call__
+  File "cupy/_core/_kernel.pyx", line 645, in cupy._core._kernel._get_out_args_from_optionals
+  File "cupy/_core/core.pyx", line 2884, in cupy._core.core._ndarray_init
+  File "cupy/_core/core.pyx", line 257, in cupy._core.core._ndarray_base._init_fast
+  File "cupy/cuda/memory.pyx", line 738, in cupy.cuda.memory.alloc
+  File "cupy/cuda/memory.pyx", line 1424, in cupy.cuda.memory.MemoryPool.malloc
+  File "cupy/cuda/memory.pyx", line 1445, in cupy.cuda.memory.MemoryPool.malloc
+  File "cupy/cuda/memory.pyx", line 1116, in cupy.cuda.memory.SingleDeviceMemoryPool.malloc
+  File "cupy/cuda/memory.pyx", line 1137, in cupy.cuda.memory.SingleDeviceMemoryPool._malloc
+  File "cupy/cuda/memory.pyx", line 1382, in cupy.cuda.memory.SingleDeviceMemoryPool._try_malloc
+  File "cupy/cuda/memory.pyx", line 1385, in cupy.cuda.memory.SingleDeviceMemoryPool._try_malloc
+cupy.cuda.memory.OutOfMemoryError: Out of memory allocating 28,800,000,000 bytes (allocated so far: 61,200,000,000 bytes).
+Traceback (most recent call last):
+  File "/shared/home/liam.berrisford/GPU_Training/slurm_submission_scripts/../content/game_of_life_experiment.py", line 123, in <module>
+    subprocess.run(cmd, check=True)
+  File "/shared/home/liam.berrisford/spack/opt/spack/linux-zen2/python-3.12.9-aovth3o77v3iw4v6o4z4aphm2co3pven/lib/python3.12/subprocess.py", line 573, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['poetry', 'run', 'game_of_life_gpu', '--size', '60000', '--timesteps', '100']' returned non-zero exit status 1.

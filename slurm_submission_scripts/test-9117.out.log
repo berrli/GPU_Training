@@ -1,0 +1,143 @@
+===== Spack setup =====
+Active Spack env: ==> In environment gpu_course
+
+===== Poetry setup =====
+Using poetry from: /shared/home/liam.berrisford/.local/bin/poetry
+Installing dependencies from lock file
+
+No dependencies to install or update
+
+Installing the current project: GPU Training Course (0.1.0)
+Poetry venv: /shared/home/liam.berrisford/.cache/pypoetry/virtualenvs/gpu_training_course-WCYLb1XO-py3.12
+===== Running CUDA check =====
+Number of CUDA devices: 1
+cuda_check exit code: 0
+
+===== GPU info (nvidia-smi) =====
+index, name, driver_version, memory.total [MiB], memory.used [MiB], utilization.gpu [%]
+0, NVIDIA A100-SXM4-80GB, 560.35.03, 81920 MiB, 1 MiB, 0 %
+
+===== Running Game of Life Experiment =====
+/shared/home/liam.berrisford/GPU_Training/slurm_submission_scripts
+[CuPy] Args received: Namespace(size=50, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=50, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=50, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=100, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=100, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=100, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=250, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=250, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=250, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=500, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=500, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=500, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=1000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=1000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=1000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=2500, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=2500, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=2500, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=5000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=5000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=5000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=10000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=10000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=10000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=15000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=15000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=15000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=20000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=20000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=20000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=25000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=25000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=25000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=30000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=30000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=30000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=40000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=40000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+[CuPy] Args received: Namespace(size=40000, timesteps=100, save_gif=False)
+[CuPy] GIF creation skipped; history not saved.
+
+==== Running benchmarks for 100 timesteps ====
+  CuPy (GPU)   |     50×50     | run 1/3
+  CuPy (GPU)   |     50×50     | run 2/3
+  CuPy (GPU)   |     50×50     | run 3/3
+  CuPy (GPU)   |    100×100    | run 1/3
+  CuPy (GPU)   |    100×100    | run 2/3
+  CuPy (GPU)   |    100×100    | run 3/3
+  CuPy (GPU)   |    250×250    | run 1/3
+  CuPy (GPU)   |    250×250    | run 2/3
+  CuPy (GPU)   |    250×250    | run 3/3
+  CuPy (GPU)   |    500×500    | run 1/3
+  CuPy (GPU)   |    500×500    | run 2/3
+  CuPy (GPU)   |    500×500    | run 3/3
+  CuPy (GPU)   |   1000×1000   | run 1/3
+  CuPy (GPU)   |   1000×1000   | run 2/3
+  CuPy (GPU)   |   1000×1000   | run 3/3
+  CuPy (GPU)   |   2500×2500   | run 1/3
+  CuPy (GPU)   |   2500×2500   | run 2/3
+  CuPy (GPU)   |   2500×2500   | run 3/3
+  CuPy (GPU)   |   5000×5000   | run 1/3
+  CuPy (GPU)   |   5000×5000   | run 2/3
+  CuPy (GPU)   |   5000×5000   | run 3/3
+  CuPy (GPU)   |  10000×10000  | run 1/3
+  CuPy (GPU)   |  10000×10000  | run 2/3
+  CuPy (GPU)   |  10000×10000  | run 3/3
+  CuPy (GPU)   |  15000×15000  | run 1/3
+  CuPy (GPU)   |  15000×15000  | run 2/3
+  CuPy (GPU)   |  15000×15000  | run 3/3
+  CuPy (GPU)   |  20000×20000  | run 1/3
+  CuPy (GPU)   |  20000×20000  | run 2/3
+  CuPy (GPU)   |  20000×20000  | run 3/3
+  CuPy (GPU)   |  25000×25000  | run 1/3
+  CuPy (GPU)   |  25000×25000  | run 2/3
+  CuPy (GPU)   |  25000×25000  | run 3/3
+  CuPy (GPU)   |  30000×30000  | run 1/3
+  CuPy (GPU)   |  30000×30000  | run 2/3
+  CuPy (GPU)   |  30000×30000  | run 3/3
+  CuPy (GPU)   |  40000×40000  | run 1/3
+  CuPy (GPU)   |  40000×40000  | run 2/3
+  CuPy (GPU)   |  40000×40000  | run 3/3
+Saved CSV: ../_static/gol_timings_NVIDIA_A100-SXM4-80GB_AMD_EPYC_7V12_64-Core_Processor_gpu_ts100.csv
+Saved plot: ../_static/gol_timings_NVIDIA_A100-SXM4-80GB_AMD_EPYC_7V12_64-Core_Processor_gpu_ts100.png
+
