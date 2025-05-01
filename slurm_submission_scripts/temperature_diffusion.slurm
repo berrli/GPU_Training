@@ -4,9 +4,10 @@
 #SBATCH --error=%x-%j.err.log
 #SBATCH --partition=ncv5
 #SBATCH --nodes=1
-#SBATCH --ntasks=4
+#SBATCH --ntasks=16
 #SBATCH --cpus-per-task=1
 #SBATCH --gpus=1
+
 
 #### Spack setup & activate “gpu_course” ####
 echo "===== Spack setup ====="
@@ -44,10 +45,18 @@ poetry run cuda_check
 echo "cuda_check exit code: $?"
 echo
 
+echo "===== GPU info (nvidia-smi) ====="
+if command -v nvidia-smi &> /dev/null; then
+    nvidia-smi --query-gpu=index,name,driver_version,memory.total,memory.used,utilization.gpu --format=csv
+else
+    echo "nvidia-smi not found in PATH"
+fi
+echo
+
 # Run the Temperature Diffusion Model 
 echo "===== Running Temperature Diffusion Experiment ====="
 pwd
-poetry run python content/temperature_diffusion_experiment.py
+poetry run python ../content/temperature_diffusion_experiment.py
 echo
 
 

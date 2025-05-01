@@ -81,7 +81,7 @@ if __name__ == "__main__":
         "CuPy (GPU)": "diffusion_cupy",
     }
 
-    timesteps_list = [10, 50, 100, 200]
+    timesteps_list = [10, 25, 50, 100]
     repeats = 3
 
     csv_file = os.path.join(OUT_DIR, "temperature_diffusion_timings.csv")

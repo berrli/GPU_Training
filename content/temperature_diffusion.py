@@ -6,14 +6,18 @@ import xarray as xr
 import numpy as np
 import cupy as cp
 from tqdm import tqdm 
+import math
+import copy
+
 
 # Define the root directory
 ROOT_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT_DIR / "data"
-OUTPUT_DIR = ROOT_DIR / "output"
-DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-01-02.nc"
+DATA_DIR = ROOT_DIR / "model_data"
+DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-01-01.nc"
+
 OUTPUT_FILE_NUMPY = "predicted_temperatures_numpy.nc"
 OUTPUT_FILE_CUPY = "predicted_temperatures_cupy.nc"
+OUTPUT_FILE_PUREPYTHON = "predicted_temperatures_purepython.nc"
 
 
 # Load the NetCDF data
@@ -40,12 +44,6 @@ def save_to_netcdf(data, new_temperature, output_file_path, num_timesteps):
         },
     )
     output_data.to_netcdf(output_file_path, engine='netcdf4')
-
-
-
-import numpy as np
-import time
-from tqdm import tqdm
 
 # Temperature diffusion function using NumPy with masking for boundaries
 def temperature_diffusion_numpy(data, num_timesteps, diffusion_coeff=0.1):
@@ -314,7 +312,7 @@ def temperature_diffusion_purepython(data, num_timesteps, diffusion_coeff=0.1):
     final = _np.array(new_temperature)
 
     # Save result
-    save_to_netcdf(data, final, OUTPUT_DIR / OUTPUT_FILE_PUREPYTHON, num_timesteps)
+    save_to_netcdf(data, final, DATA_DIR / OUTPUT_FILE_PUREPYTHON, num_timesteps)
 
     total = sum(timestep_durations)
     avg = total / num_timesteps

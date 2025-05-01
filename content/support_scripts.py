@@ -13,7 +13,7 @@ import cupy
 
 # Define the root directory
 ROOT_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT_DIR / "data"
+DATA_DIR = ROOT_DIR / "model_data"
 OUTPUT_DIR = ROOT_DIR / "output"
 ORIGINAL_DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-01-02.nc"
 
@@ -78,41 +78,36 @@ def summary():
     # Pass parsed arguments to visualisation_slice
     calculate_summary(data_file=args.data_file)
 
-def visualisation_static(data_file=ORIGINAL_DATA_FILE):
-    # Load the NetCDF file
-    file_path = DATA_DIR / data_file
+def visualisation_static():
+    parser = argparse.ArgumentParser(
+        description="Generate a static 2D temperature slice"
+    )
+    parser.add_argument(
+        "--data-file", "-f",
+        default=ORIGINAL_DATA_FILE,
+        help="Which .nc file to visualize"
+    )
+    args = parser.parse_args()
+
+    # Now call your existing logic, passing args.data_file
+    file_path = DATA_DIR / args.data_file
     data = xr.open_dataset(file_path)
+    theta = data["thetao"].isel(time=0, depth=0)
+    lats = theta["latitude"].values
+    lons = theta["longitude"].values
 
-    # Assume the variable of interest is named 'temperature' (check the variable name in your file)
-    temperature = data['thetao']
-
-    # Select a subset for plotting (e.g., take a single depth level or time step)
-    # Adjust these selections based on your dataset's structure
-    temperature_subset = temperature.isel(time=0, depth=0)  # First time step and surface level
-
-    # Prepare data for 2D plotting
-    latitudes = temperature_subset['latitude'].values
-    longitudes = temperature_subset['longitude'].values
-    temperature_values = temperature_subset.values
-
-    # Create a 2D plot of the temperature data
     fig, ax = plt.subplots(figsize=(10, 6))
+    c = ax.pcolormesh(lons, lats, theta.values, shading="auto", cmap="viridis")
+    ax.set_xlabel("Longitude")
+    ax.set_ylabel("Latitude")
+    ax.set_title(f"Surface Temperature: {args.data_file}")
+    fig.colorbar(c, ax=ax, label="°C")
 
-    # Plot the temperature data as a heatmap
-    c = ax.pcolormesh(longitudes, latitudes, temperature_values, shading='auto', cmap='viridis')
-    ax.set_xlabel('Longitude')
-    ax.set_ylabel('Latitude')
-    ax.set_title('Ocean Surface Temperature')
-
-    # Add a color bar for the temperature values
-    fig.colorbar(c, ax=ax, label='Temperature (°C)')
-
-    # Save the figure to disk in the output directory
-    save_path = OUTPUT_DIR / "temperature_slice.png"
-    plt.savefig(save_path, format='png', dpi=300, bbox_inches='tight')
-
-    # Optionally, close the figure after saving to free memory
+    save_path = OUTPUT_DIR / f"{Path(args.data_file).stem}_static.png"
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
+    print(f"Saved to {save_path}")
+
 
 def plot_slice(target_depth=0, animation_speed=100, data_file=ORIGINAL_DATA_FILE):
     # Load the NetCDF file
@@ -216,15 +211,24 @@ def plot_slice(target_depth=0, animation_speed=100, data_file=ORIGINAL_DATA_FILE
     fig.write_html(save_path)
 
 def visualisation_slice():
-    parser = argparse.ArgumentParser(description="Visualize a 2D temperature cube.")
-    parser.add_argument("--target_depth", type=int, default=50, help="Target Depth Level.")
-    parser.add_argument("--animation_speed", type=int, default=300, help="Target Depth Level.")
-    parser.add_argument("--data_file", type=str, default=ORIGINAL_DATA_FILE, help="Data file for visualisation.")
-
+    parser = argparse.ArgumentParser(
+        description="Animate a 2D temperature slice over time"
+    )
+    parser.add_argument("--target_depth",   type=int, default=50,  help="Depth in metres")
+    parser.add_argument("--animation_speed",type=int, default=300, help="ms per frame")
+    parser.add_argument(
+        "--data-file", "-f",
+        default=ORIGINAL_DATA_FILE,
+        help="Which .nc file to visualize"
+    )
     args = parser.parse_args()
 
-    # Pass parsed arguments to visualisation_slice
-    plot_slice(target_depth=args.target_depth, animation_speed=args.animation_speed, data_file=args.data_file)
+    plot_slice(
+        target_depth=args.target_depth,
+        animation_speed=args.animation_speed,
+        data_file=args.data_file
+    )
+
 
 
 
@@ -334,14 +338,23 @@ def plot_cube(num_depths=3, num_time_steps=3, data_file=ORIGINAL_DATA_FILE):
     fig.write_html(save_path)
 
 def visualisation_cube():
-    parser = argparse.ArgumentParser(description="Visualize a 3D temperature cube.")
-    parser.add_argument("--num_depths", type=int, default=5, help="Number of depth levels.")
-    parser.add_argument("--num_time_steps", type=int, default=3, help="Number of time steps.")
-    parser.add_argument("--data_file", type=str, default=ORIGINAL_DATA_FILE, help="Data file for visualisation.")
-
+    parser = argparse.ArgumentParser(
+        description="Animate a 3D temperature cube over time"
+    )
+    parser.add_argument("--num_depths",     type=int, default=5, help="Number of depth levels")
+    parser.add_argument("--num_time_steps", type=int, default=3, help="Number of time steps")
+    parser.add_argument(
+        "--data-file", "-f",
+        default=ORIGINAL_DATA_FILE,
+        help="Which .nc file to visualize"
+    )
     args = parser.parse_args()
 
-    # Pass parsed arguments to visualisation_cube
-    plot_cube(num_depths=args.num_depths, num_time_steps=args.num_time_steps, data_file=args.data_file)
+    plot_cube(
+        num_depths=args.num_depths,
+        num_time_steps=args.num_time_steps,
+        data_file=args.data_file
+    )
+
 
 
