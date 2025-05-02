@@ -30,7 +30,10 @@ diffusion_numpy = "content.temperature_diffusion:run_diffusion_numpy"
 game_of_life_cpu = "content.game_of_life:run_life_numpy"
 game_of_life_gpu = "content.game_of_life:run_life_cupy"
 game_of_life_naive = "content.game_of_life:run_life_naive"
-
+game_of_life_cpu_profiled = "content.game_of_life_profiled:run_life_numpy"
+game_of_life_gpu_profiled = "content.game_of_life_profiled:run_life_cupy"
+game_of_life_naive_profiled = "content.game_of_life_profiled:run_life_naive"
+game_of_life_experiment_profiled = "content.game_of_life_experiment_profiled:run_experiment"
 
 [build-system]
 requires = ["poetry-core"]

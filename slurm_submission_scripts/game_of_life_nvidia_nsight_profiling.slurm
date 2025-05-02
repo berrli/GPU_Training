@@ -57,10 +57,10 @@ echo
 echo "===== Running Game of Life Experiment ====="
 pwd
 # if nsys is already on your PATH (e.g. /usr/local/cuda/bin in your PATH)
-nsys profile \
-  -o ../output/profile_report                \  # output basename; will produce profile_report.nsys-rep
-  --profile-child-processes        \  # ensures it captures the ‘poetry run’ child
-  poetry run python ../content/game_of_life_experiment.py
+nsys profile --sample=none --trace=cuda,nvtx -o ../output/${SLURM_JOB_NAME}_${SLURM_JOB_ID}_exp_report -- poetry run game_of_life_experiment_profiled --profile-gpu --profile-cpu
+
+
+
 
 echo
 

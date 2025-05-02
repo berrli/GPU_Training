@@ -88,8 +88,8 @@ methods = {
 clean_names = [v.replace("game_of_life_", "") for v in methods.values()]
 method_ids  = "_".join(sorted(clean_names))
 
-#grid_sizes     = [50, 100, 250, 500, 1000, 2500, 5000, 10000]
-grid_sizes     = [50, 100]
+#grid_sizes     = [50, 100, 250, 500, 1000]
+grid_sizes     = [10, 25]
 timesteps_list = [100]   # you can expand this list
 repeats         = 3
 
