@@ -40,3 +40,10 @@ html:
 
 execute:
   execute_notebooks: "force"
+  exclude_patterns: 
+      - 'lessons/theory.ipynb'
+      - 'lessons/spack.ipynb'
+      - 'lessons/slurm.ipynb'
+      - 'lessons/conways_game_of_life.ipynb'
+      - 'lessons/profiling.ipynb'
+      - 'lessons/temperature_diffusion.ipynb'
