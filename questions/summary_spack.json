@@ -1,5 +1,109 @@
 [
     {
+        "question": "In the above spack spec output, what build system is used for the top-level cuda@12.8.0 package?",
+        "type": "many_choice",
+        "answers": [
+            {
+                "answer": "Autotools",
+                "correct": false,
+                "feedback": "Incorrect"
+            },
+            {
+                "answer": "CMake",
+                "correct": false,
+                "feedback": "Incorrect"
+            },
+            {
+                "answer": "Generic",
+                "correct": true,
+                "feedback": "Correct"
+            },
+            {
+                "answer": "Makefile",
+                "correct": false,
+                "feedback": "Incorrect"
+            }
+        ]
+    },
+    {
+        "question": "In the above spack spec output, which feature is enabled in the Python build according to the spec?",
+        "type": "many_choice",
+        "answers": [
+            {
+                "answer": "tkinter",
+                "correct": false,
+                "feedback": "Incorrect"
+            },
+            {
+                "answer": "debug symbols",
+                "correct": false,
+                "feedback": "Incorrect"
+            },
+            {
+                "answer": "sqlite3",
+                "correct": true,
+                "feedback": "Correct"
+            },
+            {
+                "answer": "optimizations",
+                "correct": false,
+                "feedback": "Incorrect"
+            }
+        ]
+    },
+    {
+        "question": "In the above spack spec output, what architecture and OS is targeted by all packages in this spec?",
+        "type": "many_choice",
+        "answers": [
+            {
+                "answer": "linux-ubuntu20.04-x86_64",
+                "correct": false,
+                "feedback": "Incorrect"
+            },
+            {
+                "answer": "linux-ubuntu22.04-zen2",
+                "correct": true,
+                "feedback": "Correct"
+            },
+            {
+                "answer": "linux-centos7-x86_64",
+                "correct": false,
+                "feedback": "Incorrect"
+            },
+            {
+                "answer": "linux-ubuntu22.04-amd64",
+                "correct": false,
+                "feedback": "Incorrect"
+            }
+        ]
+    },
+    {
+        "question": "In the above spack spec output, what version of bzip2 is specified as a dependency of Python?",
+        "type": "many_choice",
+        "answers": [
+            {
+                "answer": "1.0.6",
+                "correct": false,
+                "feedback": "Incorrect"
+            },
+            {
+                "answer": "1.0.8",
+                "correct": true,
+                "feedback": "Correct"
+            },
+            {
+                "answer": "1.0.10",
+                "correct": false,
+                "feedback": "Incorrect"
+            },
+            {
+                "answer": "1.0.4",
+                "correct": false,
+                "feedback": "Incorrect"
+            }
+        ]
+    },
+    {
         "question": "What does \"spack env activate -p gpu_training\" do?",
         "type": "many_choice",
         "answers": [
