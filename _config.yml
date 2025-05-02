@@ -31,12 +31,6 @@ repository:
 html:
   use_issues_button: true
   use_repository_button: true
-  theme:
-    name: sphinx_book_theme
-    options:
-      # Default is something like 60–70 characters; bump it up!
-      content-width: 90%        # or "1200px" if you want a fixed width
-      # table-width: 100%       # (optional) stretch tables too
 
 execute:
   execute_notebooks: "force"
