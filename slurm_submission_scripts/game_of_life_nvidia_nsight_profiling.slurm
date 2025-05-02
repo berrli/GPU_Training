@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=test
+#SBATCH --job-name=game_of_life_NSight
 #SBATCH --output=%x-%j.out.log
 #SBATCH --error=%x-%j.err.log
 #SBATCH --partition=ncv5
