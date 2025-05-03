@@ -45,9 +45,6 @@ if ! command -v poetry &> /dev/null; then
     exit 1
 fi
 
-# Change into your project directory (adjust SCRIPT_DIR if needed)
-cd "${SCRIPT_DIR:-$(pwd)}/GPU_Course"
-
 # Install dependencies without interactive prompts or ANSI color codes
 poetry install --no-interaction --no-ansi
 
