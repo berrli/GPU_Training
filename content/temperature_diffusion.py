@@ -1,3 +1,25 @@
+"""
+3D Temperature Diffusion Simulation
+
+This module implements a simple 3D temperature diffusion model using three backends:
+- NumPy (CPU)
+- CuPy (GPU)
+- Pure Python nested lists
+
+Functions:
+- load_data: Load ocean temperature data from a NetCDF file.
+- save_to_netcdf: Save computed temperature fields back to NetCDF.
+- temperature_diffusion_numpy: Run diffusion with NumPy arrays.
+- temperature_diffusion_cupy: Run diffusion on GPU via CuPy.
+- temperature_diffusion_purepython: Naive pure-Python implementation.
+- run_diffusion_*: Entry points for CLI execution.
+"""
+
+
+# -------------------------------------------------------------------
+# Library imports
+# -------------------------------------------------------------------
+
 import xarray as xr
 from pathlib import Path
 import argparse
@@ -9,24 +31,56 @@ from tqdm import tqdm
 import math
 import copy
 
+# -------------------------------------------------------------------
+# Constants
+# -------------------------------------------------------------------
 
-# Define the root directory
+# Define the project root directory (two levels up from this file)
 ROOT_DIR = Path(__file__).resolve().parent.parent
+
+# Directory containing NetCDF input data
 DATA_DIR = ROOT_DIR / "model_data"
+
+# NetCDF input filename (globe, 6-hourly, thetao variable)
 DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-01-01.nc"
 
+# Filenames for each output implementation
 OUTPUT_FILE_NUMPY = "predicted_temperatures_numpy.nc"
 OUTPUT_FILE_CUPY = "predicted_temperatures_cupy.nc"
 OUTPUT_FILE_PUREPYTHON = "predicted_temperatures_purepython.nc"
 
+# -------------------------------------------------------------------
+# Data I/O functions
+# -------------------------------------------------------------------
 
-# Load the NetCDF data
+
 def load_data():
+    """
+    Load the ocean temperature dataset from a NetCDF file.
+
+    The file path is constructed from DATA_DIR and DATA_FILE constants.
+
+    Returns:
+        xr.Dataset: An xarray Dataset containing the loaded data.
+    """
     file_path = DATA_DIR / DATA_FILE
     return xr.open_dataset(file_path)
 
 
 def save_to_netcdf(data, new_temperature, output_file_path, num_timesteps):
+    """
+    Save a modified temperature array to a NetCDF file.
+
+    Adjusts the temperature array to match the specified number of timesteps
+    and constructs a new xarray Dataset with the original spatial coordinates.
+
+    Args:
+        data (xr.Dataset): Original dataset containing depth, latitude, longitude.
+        new_temperature (np.ndarray): Array of shape (time, depth, lat, lon)
+            containing the updated temperatures.
+        output_file_path (Path or str): Path to write the new NetCDF file.
+        num_timesteps (int): Number of timesteps to include in the output.
+    """
     # Adjust new_temperature to have only num_timesteps or fewer
     new_temperature = new_temperature[:num_timesteps]  # Only include the desired number of timesteps
 
@@ -45,8 +99,27 @@ def save_to_netcdf(data, new_temperature, output_file_path, num_timesteps):
     )
     output_data.to_netcdf(output_file_path, engine='netcdf4')
 
+# -------------------------------------------------------------------
+# Diffusion model implementations
+# -------------------------------------------------------------------
+
 # Temperature diffusion function using NumPy with masking for boundaries
 def temperature_diffusion_numpy(data, num_timesteps, diffusion_coeff=0.1):
+    """
+    Simulate temperature diffusion over time using NumPy arrays.
+
+    A simple 3D diffusion stencil is applied across the ocean grid,
+    with NaN regions (land) masked out.
+
+    Args:
+        data (xr.Dataset): Input dataset containing the 'thetao' variable.
+        num_timesteps (int): Number of timesteps to simulate.
+        diffusion_coeff (float, optional): Diffusion coefficient. Defaults to 0.1.
+
+    Side effects:
+        - Saves the resulting temperature field to a NetCDF file (OUTPUT_FILE_NUMPY).
+        - Prints timing statistics to stdout.
+    """
     temperature = np.asarray(data['thetao'].values)  # Convert to a NumPy array
     temperature = temperature[0:1, :, :, :]
     temperature = np.tile(temperature, (num_timesteps, 1, 1, 1))
@@ -116,6 +189,11 @@ def temperature_diffusion_numpy(data, num_timesteps, diffusion_coeff=0.1):
 
     
 def run_diffusion_numpy():
+    """
+    Entry point for running the NumPy diffusion model via command line.
+
+    Parses --num_timesteps and invokes temperature_diffusion_numpy().
+    """
     parser = argparse.ArgumentParser(description="Run 3D Diffusion Model with Numpy")
     parser.add_argument("--num_timesteps", type=int, default=300, help="Number of Timesteps to run for")
 
@@ -126,6 +204,21 @@ def run_diffusion_numpy():
 
 # # Temperature diffusion function using CuPy with masking for boundaries
 def temperature_diffusion_cupy(data, num_timesteps, diffusion_coeff=0.5):
+    """
+    Simulate temperature diffusion over time using CuPy (GPU acceleration).
+
+    Similar stencil as the NumPy version, but runs on the GPU.
+    Data is converted back to NumPy before saving.
+
+    Args:
+        data (xr.Dataset): Input dataset containing 'thetao'.
+        num_timesteps (int): Number of timesteps to simulate.
+        diffusion_coeff (float, optional): Diffusion coefficient. Defaults to 0.5.
+
+    Side effects:
+        - Saves the resulting field to a NetCDF file (OUTPUT_FILE_CUPY).
+        - Prints timing statistics.
+    """
     temperature = cp.asarray(data['thetao'].values)  # Convert to a CuPy array
     temperature = temperature[0:1, :, :, :]
     temperature = np.tile(temperature, (num_timesteps, 1, 1, 1))
@@ -196,6 +289,11 @@ def temperature_diffusion_cupy(data, num_timesteps, diffusion_coeff=0.5):
 
     
 def run_diffusion_cupy():
+    """
+    Entry point for running the CuPy diffusion model via command line.
+
+    Parses --num_timesteps and calls temperature_diffusion_cupy().
+    """
     parser = argparse.ArgumentParser(description="Run 3D Diffusion Model with CuPy")
     parser.add_argument("--num_timesteps", type=int, default=300, help="Number of Timesteps to run for")
 
@@ -206,6 +304,21 @@ def run_diffusion_cupy():
 
 
 def temperature_diffusion_purepython(data, num_timesteps, diffusion_coeff=0.1):
+    """
+    Simulate temperature diffusion using pure Python nested loops and lists.
+
+    This implementation is the simplest (and slowest), building Python lists
+    and manually iterating over every grid cell.
+
+    Args:
+        data (xr.Dataset): Dataset containing 'thetao'.
+        num_timesteps (int): Number of timesteps to simulate.
+        diffusion_coeff (float, optional): Diffusion coefficient. Defaults to 0.1.
+
+    Side effects:
+        - Saves the resulting field to a NetCDF file (OUTPUT_FILE_PUREPYTHON).
+        - Prints timing statistics.
+    """
     # Pull raw array and get dims
     raw = data['thetao'].values              # shape (time, depth, lat, lon)
     depth, lat, lon = raw.shape[1], raw.shape[2], raw.shape[3]
@@ -273,8 +386,7 @@ def temperature_diffusion_purepython(data, num_timesteps, diffusion_coeff=0.1):
         temperature[t] = copy.deepcopy(new_temperature[t])
 
     # Convert to NumPy array for saving
-    import numpy as _np
-    final = _np.array(new_temperature)
+    final = np.array(new_temperature)
 
     # Save result
     save_to_netcdf(data, final, DATA_DIR / OUTPUT_FILE_PUREPYTHON, num_timesteps)
@@ -286,6 +398,11 @@ def temperature_diffusion_purepython(data, num_timesteps, diffusion_coeff=0.1):
           f"Average time per timestep: {avg:.4f} seconds.")
 
 def run_diffusion_purepython():
+    """
+    Entry point for running the pure Python diffusion model via command line.
+
+    Parses --num_timesteps and invokes temperature_diffusion_purepython().
+    """
     parser = argparse.ArgumentParser(description="Run 3D Diffusion Model in pure Python")
     parser.add_argument("--num_timesteps", type=int, default=300, help="Number of Timesteps")
     args = parser.parse_args()

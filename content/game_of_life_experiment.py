@@ -1,3 +1,21 @@
+"""
+Benchmarking Game of Life Implementations Across Grid Sizes
+
+This script measures execution time for three versions of Conway’s Game
+of Life:
+  - NumPy (CPU vectorized)
+  - CuPy (GPU-accelerated)
+  - Naive Python (nested loops)
+
+For each combination of grid size and number of timesteps, it:
+  1. Runs each implementation multiple times.
+  2. Records mean and standard deviation of runtimes to a CSV.
+  3. Generates an error‐bar plot of time vs. grid size.
+"""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Library imports
+# ─────────────────────────────────────────────────────────────────────────────
 import subprocess
 import time
 import numpy as np
@@ -5,11 +23,22 @@ import os
 import csv
 import matplotlib.pyplot as plt
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Constants
+# ─────────────────────────────────────────────────────────────────────────────
+
 # Ensure output directory exists
 out_dir = "../output"
 os.makedirs(out_dir, exist_ok=True)
 
 def get_gpu_name():
+    """
+    Query the system GPU name via nvidia-smi.
+
+    Returns:
+        The first GPU’s name with spaces replaced by underscores, or
+        'Unknown_GPU' if the command fails.
+    """
     try:
         out = subprocess.check_output(
             ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
@@ -20,6 +49,13 @@ def get_gpu_name():
         return "Unknown_GPU"
 
 def get_cpu_name():
+    """
+    Query the CPU model name via lscpu (Linux).
+
+    Returns:
+        The CPU model string with spaces replaced by underscores, or
+        'Unknown_CPU' if detection fails.
+    """
     try:
         out = subprocess.check_output(["lscpu"], stderr=subprocess.DEVNULL).decode().splitlines()
         for line in out:
@@ -30,9 +66,15 @@ def get_cpu_name():
     return "Unknown_CPU"
 
 def plot_timings(csv_filename):
-    # (… same as before …)
+    """
+    Read benchmark CSV and generate an error‐bar plot: execution time vs. grid size.
 
-    # Read data back in
+    The CSV is expected to have columns:
+      gpu, cpu, method, grid_size, timesteps, mean_time_sec, std_dev_sec
+
+    Args:
+        csv_filename: Path to the CSV file containing benchmark results.
+    """
     data = {}
     timesteps = None
     with open(csv_filename, newline="") as f:
@@ -73,7 +115,9 @@ def plot_timings(csv_filename):
     print(f"Saved plot: {out_png}")
 
 
-# ——— Main benchmarking loop ———
+# ─────────────────────────────────────────────────────────────────────────────
+# Main benchmarking loop
+# ─────────────────────────────────────────────────────────────────────────────
 
 gpu_name = get_gpu_name().replace(" ", "_")
 cpu_name = get_cpu_name().replace(" ", "_")

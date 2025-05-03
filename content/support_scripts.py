@@ -1,3 +1,25 @@
+"""
+Temperature Diffusion Visualization and Data Utilities
+
+This module provides:
+- GPU/CPU hardware queries
+- Downloading ocean temperature subsets from Copernicus
+- Summary statistics for NetCDF temperature files
+- Static 2D surface plots
+- Interactive 2D slice animations
+- Interactive 3D cube animations
+
+Entry points (via CLI):
+- summary()
+- visualisation_static()
+- visualisation_slice()
+- visualisation_cube()
+"""
+
+# -------------------------------------------------------------------
+# Library imports
+# -------------------------------------------------------------------
+
 from ast import Str
 from matplotlib import animation
 import xarray as xr
@@ -11,6 +33,9 @@ import subprocess
 import os
 import cupy
 
+# -------------------------------------------------------------------
+# Constants
+# -------------------------------------------------------------------
 # Define the root directory
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "model_data"
@@ -18,12 +43,23 @@ OUTPUT_DIR = ROOT_DIR / "output"
 ORIGINAL_DATA_FILE = "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i_thetao_13.83W-6.17E_46.83N-65.25N_0.49-5727.92m_2024-01-01-2024-01-02.nc"
 
 def cuda_check():
-    # Get the number of devices
+    """
+    Print the number of available CUDA-capable GPU devices.
+
+    Uses CuPy's runtime API to query device count.
+    """
     num_devices = cupy.cuda.runtime.getDeviceCount()
     print(f"Number of CUDA devices: {num_devices}")
 
 def download_ocean_data():
-    # Define the command as a list
+    """
+    Download a subset of ocean temperature data using the CopernicusMarine CLI.
+
+    Changes into DATA_DIR, runs 'poetry run copernicusmarine subset' with
+    the specified bounding box and time range, then returns to DATA_DIR.
+
+    On success, prints a success message; on failure, prints the error.
+    """
     command = [
         "poetry", "run", "copernicusmarine", "subset",
         "--dataset-id", "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i",
@@ -51,6 +87,17 @@ def download_ocean_data():
         os.chdir(DATA_DIR)
 
 def calculate_summary(data_file):
+    """
+    Load a NetCDF file and print summary statistics for 'thetao'.
+
+    Args:
+        data_file (str): Filename (within DATA_DIR) of the .nc dataset.
+
+    Prints:
+        - Array shape (time, depth, lat, lon)
+        - Mean, max, min, std of the temperature
+        - Full dataset dimension and coordinate details
+    """
     # Load the NetCDF file from the data directory
     file_path = DATA_DIR / data_file
     data = xr.open_dataset(file_path)
@@ -70,6 +117,12 @@ def calculate_summary(data_file):
     print(data)
 
 def summary():
+    """
+    CLI entry point for calculate_summary.
+
+    Usage:
+        python this_script.py --data-file filename.nc
+    """
     parser = argparse.ArgumentParser(description="Calculate Summary Statistics for a datafile")
     parser.add_argument("--data-file", type=str, default=ORIGINAL_DATA_FILE, help="Data file for visualisation.")
 
@@ -79,6 +132,11 @@ def summary():
     calculate_summary(data_file=args.data_file)
 
 def visualisation_static():
+    """
+    CLI entry point for generating a static 2D surface plot of temperature.
+
+    Produces a PNG of the surface (time=0, depth=0) saved in OUTPUT_DIR.
+    """
     parser = argparse.ArgumentParser(
         description="Generate a static 2D temperature slice"
     )
@@ -110,6 +168,17 @@ def visualisation_static():
 
 
 def plot_slice(target_depth=0, animation_speed=100, data_file=ORIGINAL_DATA_FILE):
+    """
+    Create an interactive 2D heatmap animation over time at a given depth.
+
+    Args:
+        target_depth (float): Desired depth in metres.
+        animation_speed (int): Frame duration in milliseconds.
+        data_file (str): NetCDF filename in DATA_DIR.
+
+    Saves:
+        An HTML file with a Plotly animated heatmap in OUTPUT_DIR.
+    """
     # Load the NetCDF file
     file_path = DATA_DIR / data_file
     data = xr.open_dataset(file_path)
@@ -211,6 +280,12 @@ def plot_slice(target_depth=0, animation_speed=100, data_file=ORIGINAL_DATA_FILE
     fig.write_html(save_path)
 
 def visualisation_slice():
+    """
+    CLI entry point for the 2D interactive slice animation.
+
+    Usage:
+        python this_script.py --target_depth 50 --animation_speed 300 --data-file file.nc
+    """
     parser = argparse.ArgumentParser(
         description="Animate a 2D temperature slice over time"
     )
@@ -233,6 +308,17 @@ def visualisation_slice():
 
 
 def plot_cube(num_depths=3, num_time_steps=3, data_file=ORIGINAL_DATA_FILE):
+    """
+    Create an interactive 3D surface animation over time and depth.
+
+    Args:
+        num_depths (int): Number of depth levels to include.
+        num_time_steps (int): Number of time frames to animate.
+        data_file (str): NetCDF filename in DATA_DIR.
+
+    Saves:
+        An HTML file with a Plotly 3D animated cube in OUTPUT_DIR.
+    """
     # Load the NetCDF file
     file_path = DATA_DIR / data_file
     data = xr.open_dataset(file_path)
@@ -338,6 +424,12 @@ def plot_cube(num_depths=3, num_time_steps=3, data_file=ORIGINAL_DATA_FILE):
     fig.write_html(save_path)
 
 def visualisation_cube():
+    """
+    CLI entry point for the 3D cube animation.
+
+    Usage:
+        python this_script.py --num_depths 5 --num_time_steps 3 --data-file file.nc
+    """
     parser = argparse.ArgumentParser(
         description="Animate a 3D temperature cube over time"
     )

@@ -1,3 +1,22 @@
+"""
+Benchmarking Suite for Profiled Game of Life Implementations
+
+This script runs profiled entry-points for three versions of Conway’s Game of Life:
+  - NumPy (CPU):     game_of_life_cpu_profiled
+  - CuPy (GPU):      game_of_life_gpu_profiled
+  - Naive (CPU):     game_of_life_naive_profiled
+
+For each combination of grid size and timestep count, it:
+  1. Executes each implementation multiple times via Poetry entry-points.
+  2. Computes mean and standard deviation of run times.
+  3. Writes results to a CSV file.
+  4. Generates an error-bar plot (execution time vs. grid size) saved alongside the CSV.
+"""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Library imports
+# ─────────────────────────────────────────────────────────────────────────────
+
 import subprocess
 import time
 import numpy as np
@@ -5,11 +24,21 @@ import os
 import csv
 import matplotlib.pyplot as plt
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Constants
+# ─────────────────────────────────────────────────────────────────────────────
+
 # Ensure output directory exists
 out_dir = "../output"
 os.makedirs(out_dir, exist_ok=True)
 
 def get_gpu_name():
+    """
+    Query the GPU model name via `nvidia-smi`.
+
+    Returns:
+        str: The first GPU’s name, or 'Unknown_GPU' if detection fails.
+    """
     try:
         out = subprocess.check_output(
             ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
@@ -20,6 +49,12 @@ def get_gpu_name():
         return "Unknown_GPU"
 
 def get_cpu_name():
+    """
+    Query the CPU model name via `lscpu` on Linux.
+
+    Returns:
+        str: The CPU model string, or 'Unknown_CPU' if detection fails.
+    """
     try:
         out = subprocess.check_output(["lscpu"], stderr=subprocess.DEVNULL).decode().splitlines()
         for line in out:
@@ -30,7 +65,15 @@ def get_cpu_name():
     return "Unknown_CPU"
 
 def plot_timings(csv_filename):
-    # Read data back in
+    """
+    Read benchmark CSV and generate an error-bar plot of runtime vs grid size.
+
+    The CSV must include columns:
+        gpu, cpu, method, grid_size, timesteps, mean_time_sec, std_dev_sec
+
+    Args:
+        csv_filename (Path): Path to the CSV file of timing results.
+    """
     data = {}
     timesteps = None
     with open(csv_filename, newline="") as f:
@@ -71,9 +114,18 @@ def plot_timings(csv_filename):
     print(f"Saved plot: {out_png}")
 
 
-# ——— Main benchmarking loop ———
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main benchmarking loop
+# ─────────────────────────────────────────────────────────────────────────────
 
 def run_experiment():
+    """
+    Main benchmarking routine.
+
+    Detects hardware names, defines profiled entry-points, loops over grid sizes
+    and timesteps, records timing statistics to CSV, and generates plots.
+    """
 
     gpu_name = get_gpu_name().replace(" ", "_")
     cpu_name = get_cpu_name().replace(" ", "_")

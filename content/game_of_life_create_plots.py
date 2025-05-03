@@ -1,26 +1,70 @@
+"""
+Aggregate and Visualize Game of Life Benchmark Results
+
+This script loads all benchmarking CSV files matching '../output/gol_timings_*.csv',
+processes hardware and method metadata, and generates publication-quality plots:
+  1. Performance of each method across different hardware.
+  2. Performance of each hardware combination across methods.
+  3. Combined overview of all methods and hardware.
+
+Key steps:
+- Load and concatenate CSV data into a pandas DataFrame.
+- Map raw GPU/CPU strings to concise, human-readable labels.
+- Define marker, color, and linestyle mappings for clarity.
+- Plot with matplotlib, saving PNGs to '../output'.
+"""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Library imports
+# ─────────────────────────────────────────────────────────────────────────────
+
 import os, glob, re
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 2) Load data
+# ─────────────────────────────────────────────────────────────────────────────
+# 1) Load all benchmark CSV files into one DataFrame
+# ─────────────────────────────────────────────────────────────────────────────
 files = glob.glob('../output/gol_timings_*.csv')
 df = pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
 
-# 3) Method markers
+# ─────────────────────────────────────────────────────────────────────────────
+# 2) Define plotting markers for each method
+# ─────────────────────────────────────────────────────────────────────────────
 marker_map = {
     'naive': 's',
     'numpy': 'o',
     'cupy': '^',
 }
 
-# 4) Short labels for GPU & CPU
+# ─────────────────────────────────────────────────────────────────────────────
+# 3) Shorten and clean hardware labels for legibility
+# ─────────────────────────────────────────────────────────────────────────────
 def short_gpu(name):
+    """
+    Map raw GPU names to concise labels for plot legends.
+
+    Args:
+        name: Original GPU string from CSV.
+
+    Returns:
+        A shorter, human-readable GPU label.
+    """
     if 'A100'   in name: return 'NV A100'
     if '3070'   in name: return 'NV RTX 3070'
     if 'H100'   in name: return 'NV H100'
     return name
 
 def short_cpu(name):
+    """
+    Simplify raw CPU strings using regex to extract brand and core count.
+
+    Args:
+        name: Original CPU string from CSV.
+
+    Returns:
+        A shorter, human-readable CPU label.
+    """
     m = re.search(r'(AMD).*?_(\d+)-Core', name, flags=re.IGNORECASE)
     if m:
         brand, cores = m.group(1).upper(), m.group(2)
@@ -28,9 +72,20 @@ def short_cpu(name):
     return name.replace('_', ' ')
 
 def base_method(method_str):
+    """
+    Strip any parenthetical notes from method names (e.g. "NumPy (CPU)" → "NumPy").
+
+    Args:
+        method_str: Full method label from CSV.
+
+    Returns:
+        Clean method name without parentheses.
+    """
     return re.sub(r'\s*\(.*\)', '', method_str).strip()
 
-# 5) Build style maps for each unique hardware combo
+# ─────────────────────────────────────────────────────────────────────────────
+# 4) Build style map for each unique (GPU, CPU) combination
+# ─────────────────────────────────────────────────────────────────────────────
 combos = df[['gpu','cpu']].drop_duplicates().values.tolist()
 
 # Color-blind safe palette (Paul Tol six):
@@ -45,11 +100,21 @@ for idx, (gpu, cpu) in enumerate(combos):
         'linestyle': linestyles[idx % len(linestyles)]
     }
 
-# 6) Common legend styling
 legend_kwargs = dict(fontsize='small')
 
-# 7) Plotting function
+# ─────────────────────────────────────────────────────────────────────────────
+# 5) Plotting helper function
+# ─────────────────────────────────────────────────────────────────────────────
 def make_plot(grouped, title, fname, legend_args):
+    """
+    Generate and save a line plot with error bars for grouped benchmark data.
+
+    Args:
+        grouped: pandas GroupBy object grouping DataFrame by (gpu, cpu, method).
+        title:   Title string for the plot.
+        fname:   Filename (PNG) to save under '../output/'.
+        legend_args: Extra arguments for ax.legend().
+    """
     fig, ax = plt.subplots(figsize=(8,6))
 
     for (gpu, cpu, method), g in grouped:
@@ -78,9 +143,9 @@ def make_plot(grouped, title, fname, legend_args):
     fig.savefig(f"../output/{fname}", bbox_inches='tight', dpi=300)
     plt.close(fig)
 
-# 8) Generate plots
-
-# 8.1) Method-specific across hardware
+# ─────────────────────────────────────────────────────────────────────────────
+# 6) Generate plots: method-specific across hardware
+# ─────────────────────────────────────────────────────────────────────────────
 for method in df['method'].unique():
     sub = df[df['method']==method].sort_values('grid_size')
     grp = sub.groupby(['gpu','cpu','method'])
@@ -91,7 +156,9 @@ for method in df['method'].unique():
         legend_args={'loc':'best', 'ncol':1}
     )
 
-# 8.2) Hardware-specific across methods
+# ─────────────────────────────────────────────────────────────────────────────
+# 7) Hardware-specific across methods
+# ─────────────────────────────────────────────────────────────────────────────
 for (gpu,cpu), sub in df.groupby(['gpu','cpu']):
     grp = sub.sort_values('grid_size').groupby(['gpu','cpu','method'])
     cpu_s = cpu.lower().replace(' ','_').replace('/','_')
@@ -103,7 +170,9 @@ for (gpu,cpu), sub in df.groupby(['gpu','cpu']):
         legend_args={'loc':'best', 'ncol':1}
     )
 
-# 8.3) All methods & hardware together
+# ─────────────────────────────────────────────────────────────────────────────
+# 8) Combined plot of all methods & hardware
+# ─────────────────────────────────────────────────────────────────────────────
 grp_all = df.sort_values(['gpu','cpu','method','grid_size'])\
             .groupby(['gpu','cpu','method'])
 make_plot(

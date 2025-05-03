@@ -1,4 +1,23 @@
-# content/temperature_diffusion_experiment.py
+"""
+Temperature Diffusion Experiment Runner
+
+This script benchmarks three implementations of a 3D temperature diffusion model:
+- Pure Python nested loops
+- NumPy (CPU)
+- CuPy (GPU)
+
+It records timing results over multiple timesteps and repeats, saves them to CSV,
+and generates an error‐bar plot comparing performance across methods.
+
+Functions:
+- get_gpu_name: Query the GPU model via nvidia‐smi.
+- get_cpu_name: Read the CPU model string from /proc/cpuinfo.
+- plot_timings: Read the CSV of results and produce an error‐bar plot.
+"""
+
+# -------------------------------------------------------------------
+# Library imports
+# -------------------------------------------------------------------
 
 import subprocess
 import time
@@ -7,11 +26,21 @@ import os
 import csv
 import matplotlib.pyplot as plt
 
+# -------------------------------------------------------------------
+# Constants
+# -------------------------------------------------------------------
+
 # ensure directory for outputs
 OUT_DIR = "../output"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 def get_gpu_name():
+    """
+    Query the system GPU name using `nvidia-smi`.
+
+    Returns:
+        str: The name of the first GPU, or "Unknown GPU" if the command fails.
+    """
     try:
         out = subprocess.check_output(
             ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
@@ -22,7 +51,12 @@ def get_gpu_name():
         return "Unknown GPU"
 
 def get_cpu_name():
-    # on Linux, read /proc/cpuinfo
+    """
+    Read the CPU model name from /proc/cpuinfo (Linux).
+
+    Returns:
+        str: The CPU model string, or "Unknown CPU" if reading fails.
+    """
     try:
         with open("/proc/cpuinfo") as f:
             for line in f:
@@ -34,10 +68,18 @@ def get_cpu_name():
 
 def plot_timings(csv_filename):
     """
-    Reads the CSV and makes an error-bar plot:
-      x axis = num_timesteps
-      y axis = mean_time_sec (with yerr = std_dev_sec)
+    Read benchmarking CSV and create an error‐bar plot of runtimes.
+
+    The CSV must have columns:
+      method, num_timesteps, mean_time_sec, std_dev_sec
+
+    X‐axis: number of timesteps
+    Y‐axis: mean runtime in seconds, with error bars showing standard deviation
+
+    Args:
+        csv_filename (str): Path to the CSV file of timing results.
     """
+
     data = {}
     timesteps = []
     with open(csv_filename, newline="") as f:
@@ -71,6 +113,18 @@ def plot_timings(csv_filename):
     print(f"Plot saved to {png}")
 
 if __name__ == "__main__":
+    """
+    Main execution block:
+
+    1. Detect hardware (GPU, CPU).
+    2. Define which diffusion scripts to run.
+    3. Loop over methods, timesteps, and repeats:
+       - Run each script via subprocess.
+       - Measure elapsed time.
+       - Record results to CSV.
+    4. After all runs, generate an error‐bar plot.
+    """
+
     gpu_name = get_gpu_name()
     cpu_name = get_cpu_name()
 

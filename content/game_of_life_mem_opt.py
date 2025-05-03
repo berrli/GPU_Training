@@ -1,4 +1,20 @@
-#!/usr/bin/env python3
+"""
+All-Integer Game of Life with Streaming GIF Output
+
+This script simulates Conway’s Game of Life on an N×N grid using only integer
+operations and memory-lean downsampling. It writes frames directly to disk via
+matplotlib’s PillowWriter, avoiding large in-memory histories.
+
+Functions:
+- life_step_int: Compute the next generation using integer arrays.
+- simulate_and_animate: Run the simulation, stream frames to a GIF.
+- main: CLI entry point; parses arguments, times execution, reports resource usage.
+"""
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Library imports
+# ─────────────────────────────────────────────────────────────────────────────
 import argparse
 import time
 import resource
@@ -9,12 +25,24 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from tqdm import tqdm
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 1) Core update function (all-integer)
+# ─────────────────────────────────────────────────────────────────────────────
+
 def life_step_int(grid: np.ndarray, neighbours: np.ndarray) -> np.ndarray:
     """
-    One Game of Life step on an integer grid.
-    - grid: uint8 array (0 or 1), shape (N, N)
-    - neighbours: uint8 array, shape (N, N), will be zeroed & reused
-    Returns new uint8 grid.
+    Compute one generation of Conway’s Game of Life on an integer grid.
+
+    This function uses a reusable neighbours buffer to minimize allocations.
+    All arrays are dtype uint8 (0 or 1).
+
+    Args:
+        grid (np.ndarray): 2D uint8 array of shape (N, N) with 0 or 1.
+        neighbours (np.ndarray): 2D uint8 array of same shape, used as scratch.
+
+    Returns:
+        np.ndarray: New 2D uint8 array for the next generation.
     """
     neighbours.fill(0)
     for dx, dy in (
@@ -26,15 +54,28 @@ def life_step_int(grid: np.ndarray, neighbours: np.ndarray) -> np.ndarray:
     # birth on exactly 3 neighbours; survive if alive and exactly 2 neighbours
     return ((neighbours == 3) | ((grid == 1) & (neighbours == 2))).astype(np.uint8)
 
-def simulate_and_animate(
-    N: int,
-    timesteps: int,
-    p_alive: float,
-    output_file: Path,
-    interval_ms: int = 200,
-    max_display: int = 2000,
-    dpi: int = 80
-):
+# ─────────────────────────────────────────────────────────────────────────────
+# 2) Simulation & streaming animation
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def simulate_and_animate(N: int, timesteps: int, p_alive: float, output_file: Path, interval_ms: int = 200, max_display: int = 2000, dpi: int = 80):
+    """
+    Run the Game of Life simulation and stream frames to a GIF file.
+
+    Initializes a random grid, downsamples for display if N > max_display,
+    and writes each frame directly to disk.
+
+    Args:
+        N (int): Grid dimension (N × N).
+        timesteps (int): Number of generations to simulate.
+        p_alive (float): Probability that a cell starts alive (0–1).
+        output_file (Path): Path to the output GIF.
+        interval_ms (int): Frame duration in milliseconds.
+        max_display (int): Maximum display side length; grid is downsampled
+                           by step = max(1, N // max_display).
+        dpi (int): Resolution of the saved GIF.
+    """
     # ─── Initialize full-size grid & neighbour buffers ─────────────────────────
     rng = np.random.default_rng()
     grid = np.empty((N, N), dtype=np.uint8)
