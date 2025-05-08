@@ -1,157 +1,197 @@
-"""
-All-Integer Game of Life with Streaming GIF Output
+# Game of Life simulation with detailed comments explaining each part of the code.
 
-This script simulates Conway’s Game of Life on an N×N grid using only integer
-operations and memory-lean downsampling. It writes frames directly to disk via
-matplotlib’s PillowWriter, avoiding large in-memory histories.
+import argparse      # For parsing command-line arguments
+import time          # For measuring wall-clock time
+import resource      # For measuring CPU and memory usage
+from pathlib import Path  # For convenient file path handling
 
-Functions:
-- life_step_int: Compute the next generation using integer arrays.
-- simulate_and_animate: Run the simulation, stream frames to a GIF.
-- main: CLI entry point; parses arguments, times execution, reports resource usage.
-"""
+import numpy as np                           # Numerical operations on arrays
+import matplotlib.pyplot as plt              # Plotting figures and images
+import matplotlib.animation as animation     # Creating animated GIFs
+from tqdm import tqdm                        # Progress bar for loops
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Library imports
-# ─────────────────────────────────────────────────────────────────────────────
-import argparse
-import time
-import resource
-from pathlib import Path
-
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from tqdm import tqdm
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 1) Core update function (all-integer)
-# ─────────────────────────────────────────────────────────────────────────────
 
 def life_step_int(grid: np.ndarray, neighbours: np.ndarray) -> np.ndarray:
     """
-    Compute one generation of Conway’s Game of Life on an integer grid.
+    Perform a single step (generation) update for Conway's Game of Life.
 
-    This function uses a reusable neighbours buffer to minimize allocations.
-    All arrays are dtype uint8 (0 or 1).
-
-    Args:
-        grid (np.ndarray): 2D uint8 array of shape (N, N) with 0 or 1.
-        neighbours (np.ndarray): 2D uint8 array of same shape, used as scratch.
+    Parameters:
+    - grid (np.ndarray): 2D uint8 array of shape (N, N) with values 0 (dead) or 1 (alive).
+    - neighbours (np.ndarray): 2D uint8 array of same shape used for counting neighbours.
 
     Returns:
-        np.ndarray: New 2D uint8 array for the next generation.
+    - np.ndarray: New 2D uint8 array representing next generation.
     """
+    # Reset neighbour counts to zero for current iteration
     neighbours.fill(0)
+
+    # Iterate through the eight possible neighbour offsets
     for dx, dy in (
         (-1, -1), (-1, 0), (-1, 1),
         ( 0, -1),          ( 0, 1),
         ( 1, -1), ( 1, 0), ( 1, 1),
     ):
+        # Roll the grid in x (rows) and y (columns), then accumulate counts
         neighbours += np.roll(np.roll(grid, dx, axis=0), dy, axis=1)
-    # birth on exactly 3 neighbours; survive if alive and exactly 2 neighbours
+
+    # Apply rules:
+    # - A dead cell with exactly 3 neighbours becomes alive (birth).
+    # - A live cell with 2 or 3 neighbours stays alive (survival).
+    # Convert boolean mask back to uint8.
     return ((neighbours == 3) | ((grid == 1) & (neighbours == 2))).astype(np.uint8)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 2) Simulation & streaming animation
-# ─────────────────────────────────────────────────────────────────────────────
 
-
-def simulate_and_animate(N: int, timesteps: int, p_alive: float, output_file: Path, interval_ms: int = 200, max_display: int = 2000, dpi: int = 80):
+def simulate_and_animate(
+    N: int,
+    timesteps: int,
+    p_alive: float,
+    output_file: Path,
+    interval_ms: int = 200,
+    max_display: int = 1080,
+    dpi: int = 180
+) -> np.ndarray:
     """
-    Run the Game of Life simulation and stream frames to a GIF file.
+    Initialize the Game of Life grid randomly, run simulation, create a GIF,
+    and count alive occurrences per cell over time.
 
-    Initializes a random grid, downsamples for display if N > max_display,
-    and writes each frame directly to disk.
+    Parameters:
+    - N: Grid width/height
+    - timesteps: Number of generations
+    - p_alive: Initial probability of a cell being alive
+    - output_file: Path to save the GIF
+    - interval_ms: Frame interval in milliseconds
+    - max_display: Maximum pixel dimension for display (downsample if larger)
+    - dpi: Output resolution
 
-    Args:
-        N (int): Grid dimension (N × N).
-        timesteps (int): Number of generations to simulate.
-        p_alive (float): Probability that a cell starts alive (0–1).
-        output_file (Path): Path to the output GIF.
-        interval_ms (int): Frame duration in milliseconds.
-        max_display (int): Maximum display side length; grid is downsampled
-                           by step = max(1, N // max_display).
-        dpi (int): Resolution of the saved GIF.
+    Returns:
+    - counts: 2D uint32 array of shape (N, N) with number of times each cell was alive
     """
-    # ─── Initialize full-size grid & neighbour buffers ─────────────────────────
-    rng = np.random.default_rng()
+    rng = np.random.default_rng()  # Random number generator
+
+    # Create initial grid: randomly set cells alive based on threshold
     grid = np.empty((N, N), dtype=np.uint8)
-    thresh = int(p_alive * 1_000_000)
+    threshold = int(p_alive * 1_000_000)
     for i in range(N):
-        row = rng.integers(0, 1_000_000, size=N, dtype=np.int32)
-        grid[i, :] = (row < thresh).astype(np.uint8)
-    neighbours = np.zeros((N, N), dtype=np.uint8)
+        # Generate random integers and compare to threshold for alive/dead
+        random_row = rng.integers(0, 1_000_000, size=N, dtype=np.int32)
+        grid[i, :] = (random_row < threshold).astype(np.uint8)
 
-    # ─── Compute downsample step so display ≤ max_display×max_display ──────────
+    neighbours = np.zeros((N, N), dtype=np.uint8)  # Buffer for neighbour counts
+    counts = np.zeros((N, N), dtype=np.uint32)    # Alive counts accumulator
+
+    # Determine downsampling step to fit within max_display
     step = 1 if max_display is None or max_display >= N else max(1, N // max_display)
 
-    # ─── Set up Matplotlib figure/axes (edge-to-edge, no border) ──────────────
-    fig = plt.figure(figsize=(6, 6), frameon=False)
+    # Set up Matplotlib figure without axes for clean frames
+    width_in = max_display / dpi
+    fig = plt.figure(figsize=(width_in, width_in), frameon=False)
     fig.patch.set_visible(False)
     ax = fig.add_axes([0, 0, 1, 1], frameon=False)
     ax.set_axis_off()
-    small = grid[::step, ::step]
-    im = ax.imshow(small, cmap='binary', vmin=0, vmax=1)
 
-    # ─── Set up streaming PillowWriter ─────────────────────────────────────────
-    writer = animation.PillowWriter(fps=1000/interval_ms)
+    # Display initial frame (possibly downsampled)
+    small = grid[::step, ::step]
+    im = ax.imshow(
+        small,
+        cmap='binary',  # black-white colormap
+        vmin=0, vmax=1,
+        interpolation='nearest'
+    )
+
+    # Configure GIF writer: frames per second = 1000 / interval_ms
+    writer = animation.PillowWriter(fps=1000 / interval_ms)
     writer.setup(fig, str(output_file), dpi=dpi)
 
-    # ─── Main loop with tqdm ──────────────────────────────────────────────────
+    # Main simulation loop with progress bar
     for _ in tqdm(range(timesteps), desc="Simulating & writing GIF"):
+        counts += grid            # Update alive counts
         small = grid[::step, ::step]
-        im.set_data(small)
-        writer.grab_frame()       # streams frame straight to disk
-        grid = life_step_int(grid, neighbours)
+        im.set_data(small)        # Update image data for frame
+        writer.grab_frame()       # Write frame to GIF
+        grid = life_step_int(grid, neighbours)  # Compute next generation
 
-    writer.finish()
-    plt.close(fig)
+    writer.finish()  # Finalize GIF file
+    plt.close(fig)   # Close figure to free memory
+
+    return counts
+
+
+def plot_heatmap(counts: np.ndarray, output_file: Path = None):
+    """
+    Generate a heatmap of cell alive counts and save or display it.
+
+    Parameters:
+    - counts: 2D array of alive counts per cell
+    - output_file: Optional Path to save the heatmap image (PNG). Show interactively if None.
+    """
+    plt.figure(figsize=(4, 4))
+    plt.imshow(counts, cmap='hot', interpolation='nearest')  # Use 'hot' colormap
+    plt.colorbar(label='Alive Count')  # Show scale of counts
+    plt.title('Cell Alive Counts Heatmap')
+    plt.axis('off')  # Hide axes for clarity
+
+    if output_file:
+        plt.savefig(output_file, dpi=150, bbox_inches='tight', pad_inches=0)
+        print(f"Heatmap saved to {output_file}")  # Log save location
+    else:
+        plt.show()  # Display on screen if no output path provided
+
 
 def main():
-    p = argparse.ArgumentParser("Game of Life (all-int, streaming GIF, memory-lean)")
-    p.add_argument("--size",        type=int,   default=100,   help="Grid dimension (N×N)")
-    p.add_argument("--timesteps",   type=int,   default=50,    help="Number of generations")
-    p.add_argument("--p-alive",     type=float, default=0.2,   help="Initial alive probability (0–1)")
-    p.add_argument("--output",      type=Path,  default=Path("game_of_life.gif"),
-                   help="Output GIF filename")
-    p.add_argument("--interval",    type=int,   default=200,   help="Frame duration in ms")
-    p.add_argument("--max-display", type=int,   default=2000,
-                   help="Max side length for display (downsampling factor)")
-    args = p.parse_args()
+    """
+    Entry point for command-line execution. Parses arguments, runs simulation,
+    generates GIF and heatmap, and reports resource usage.
+    """
+    # Set up argument parser with descriptions and defaults
+    parser = argparse.ArgumentParser(description="Game of Life with Heatmap (all-int, streaming HD GIF)")
+    parser.add_argument("--size", type=int, default=100, help="Grid dimension (N×N)")
+    parser.add_argument("--timesteps", type=int, default=50, help="Number of generations to simulate")
+    parser.add_argument("--p-alive", type=float, default=0.2, help="Initial alive probability (0–1)")
+    parser.add_argument("--output", type=Path, default=Path("game_of_life_hd.gif"), help="Output GIF filename")
+    parser.add_argument("--heatmap", type=Path, default=Path("alive_heatmap.png"), help="Output heatmap filename (PNG)")
+    parser.add_argument("--interval", type=int, default=200, help="Frame duration in ms")
+    parser.add_argument("--max-display", type=int, default=1080, help="Max side length for display (pixels)")
+    parser.add_argument("--dpi", type=int, default=180, help="Resolution (dots per inch) for outputs")
+    args = parser.parse_args()
 
-    print(f"[All-int Matplotlib] size={args.size}, timesteps={args.timesteps}, p_alive={args.p_alive}")
+    # Log parameters for user reference
+    print(f"[All-int Matplotlib HD + Heatmap] size={args.size}, timesteps={args.timesteps}, p_alive={args.p_alive}")
 
-    # start wall-clock & CPU timing
+    # Record start times for benchmarking
     start_wall = time.perf_counter()
-    rstart     = resource.getrusage(resource.RUSAGE_SELF)
+    rstart = resource.getrusage(resource.RUSAGE_SELF)
 
-    simulate_and_animate(
+    # Run simulation and animation
+    counts = simulate_and_animate(
         N=args.size,
         timesteps=args.timesteps,
         p_alive=args.p_alive,
         output_file=args.output,
         interval_ms=args.interval,
-        max_display=args.max_display
+        max_display=args.max_display,
+        dpi=args.dpi
     )
 
-    # end timing and read resource usage
+    # Plot and save the heatmap of alive counts
+    plot_heatmap(counts, args.heatmap)
+
+    # Record end times for benchmarking
     end_wall = time.perf_counter()
-    rend     = resource.getrusage(resource.RUSAGE_SELF)
+    rend = resource.getrusage(resource.RUSAGE_SELF)
 
-    elapsed   = end_wall - start_wall
-    cpu_user  = rend.ru_utime - rstart.ru_utime
-    cpu_system= rend.ru_stime - rstart.ru_stime
-    peak_rss  = rend.ru_maxrss      # on Linux: kilobytes
-    peak_mb   = peak_rss / 1024
+    # Compute and display resource usage
+    elapsed = end_wall - start_wall
+    cpu_user = rend.ru_utime - rstart.ru_utime
+    cpu_system = rend.ru_stime - rstart.ru_stime
+    peak_rss = rend.ru_maxrss / (1024 ** 2)  # Convert KB to GB
 
-    print(f"Saved GIF to {args.output}\n")
+    print(f"Saved HD GIF to {args.output}")
+    print(f"Saved heatmap to {args.heatmap}\n")
     print("=== Resource usage ===")
     print(f"Wall-clock time : {elapsed:.2f} s")
     print(f"CPU time         : user {cpu_user:.2f} s, system {cpu_system:.2f} s")
-    print(f"Peak memory (RSS): {peak_mb:.2f} MB")
+    print(f"Peak memory (RSS): {peak_rss:.2f} GB")
+
 
 if __name__ == "__main__":
     main()
