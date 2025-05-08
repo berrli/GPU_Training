@@ -24,7 +24,7 @@ The following provides the steps that are required to install the necessary comp
 ```{important}
 Please keep in mind that nearly all of the commands used in this section will be covered in detail within the course itself. They are included here to make sure you have all of the necessary resources (e.g. a GPU and relevant compilers) to complete the whole course. **The intention is for you to run these commands and confirm the output based on the contents of this page, not to completely understand each step you are taking.** If you do get stuck and are unsure of how to proceed, please reach out to the authors, and we can help you debug. 
 
-If you are self-studying, then please read the section "Project: Conway's Game of Life - CPU vs GPU Implementation" to understand more about the commands that are being used. If you are taking the workshop, then these commands are here to make sure that you are able to run code on the designated platform to save time in the workshop and identify any permission errors when accessing the needed resources. 
+If you are self-studying, then please read up to the section "Project: Conway's Game of Life - CPU vs GPU Implementation" to understand more about the commands that are being used. If you are taking the workshop, then these commands are here to make sure that you are able to run code on the designated platform to save time in the workshop and identify any permission errors when accessing the needed resources. 
 ```
 
 ## Clone the Repo 
