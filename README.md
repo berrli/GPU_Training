@@ -16,8 +16,61 @@ import cupy as cp
 
 By the end, you’ll have everything in place to leverage GPU acceleration immediately. We’ll walk you through installing the tools, configuring your environment, and running your first CUDA-powered code, so you can start leveraging the benefit of GPUs. 
 
+## University of Exeter ISCA HPC Installation Instructions 
+```{important}
+If you’re working on the ISCA HPC at the University of Exeter, all required software is already provided as modules — you can skip these installation steps.
+```
 
-## Installation Instructions 
+### Two Ways to Run the Course Code
+
+#### Method 1: Batch Submission via Slurm
+All of the key Slurm submission scripts live in the
+`exeter_isca_slurm_submission_scripts/` directory. You can submit a job with 
+
+```bash 
+sbatch exeter_isca_slurm_submission_scripts/<script-name>.slurm
+```
+#### Method 2: Interactive GPU Session
+If you prefer to work interactively, follow these steps:
+
+Request an interactive session: 
+```bash 
+srun \
+  --partition=gpu \
+  -A Research_Project-RSATeam \
+  --time=12:00:00 \
+  --nodes=1 \
+  --ntasks=1 \
+  --gres=gpu:1 \
+  --cpus-per-task=4 \
+  --pty /bin/bash
+```
+
+Load required modules: 
+```bash
+module load nvidia-cuda/12.1.1
+module load Python/3.11.3
+```
+
+Clone `GPU_Training` Repo:
+
+```bash 
+git clone https://github.com/berrli/GPU_Training.git
+cd GPU_Training
+```
+
+Install the Python requirements: 
+```bash 
+poetry install
+```
+
+Once your environment is ready, you can invoke any of the project’s entry points via Poetry. For example:
+```bash 
+poetry run cuda_check
+```
+
+
+## General Installation Instructions 
 
 The following provides the steps that are required to install the necessary compilers and packages to engage with the material in this course.
 
