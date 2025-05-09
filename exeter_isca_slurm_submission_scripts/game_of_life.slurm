@@ -25,7 +25,7 @@
 #SBATCH --cpus-per-task=1                  # Threads per task (for Python/IO)
 #SBATCH --gres=gpu:1                       # Number of GPUs to reserve
 #SBATCH -A Research_Project-RSATeam        # Research Project
-#SBATCH --time=12:00:00                    # Designated Wall Time
+#SBATCH --time=2:00:00                     # Designated Wall Time
 
 ####-------------------------------------------------------------------####
 #### 1) Load Required Modules (Without Spack)

@@ -18,7 +18,7 @@
 #SBATCH --cpus-per-task=1                  # CPU cores per task
 #SBATCH --gres=gpu:1                       # Number of GPUs to reserve
 #SBATCH -A Research_Project-RSATeam        # Research Project
-#SBATCH --time=12:00:00                    # Designated Wall Time
+#SBATCH --time=00:10:00                    # Designated Wall Time
 
 ####-------------------------------------------------------------------####
 #### 1) Print SLURM job allocation details                             
