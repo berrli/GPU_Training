@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "content"}]
 
 [tool.poetry.dependencies]
-python = ">=3.12,<3.13"
+python = ">=3.11,<3.13"
 xarray = "^2023.5.0"       # For handling NetCDF data
 netCDF4 = "^1.6.1"         # For reading NetCDF files
 matplotlib = "^3.7.1"      # For plotting
