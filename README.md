@@ -24,6 +24,7 @@ To engage with all of the content within this GPU Training course, you will need
 
 ``` bash
 cd /lustre/projects/Research_Project-RSATeam #This is the directory that the RSA Team will do the course in.
+mkdir $USER # Create a directory for you within the project space.
 git clone https://github.com/berrli/GPU_Training
 cd GPU_Training
 ```
