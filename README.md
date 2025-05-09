@@ -21,16 +21,18 @@ By the end, you’ll have everything in place to leverage GPU acceleration immed
 If you’re working on the ISCA HPC at the University of Exeter, all required software is already provided as modules — you can skip these installation steps.
 ```
 
+## Clone the Repo 
+
+To engage with all of the content within this GPU Training course, you will need to clone the repo, which can be done with 
+
+``` bash 
+git clone https://github.com/berrli/GPU_Training
+cd GPU_Training
+```
+
 ### Two Ways to Run the Course Code
 
-#### Method 1: Batch Submission via Slurm
-All of the key Slurm submission scripts live in the
-`exeter_isca_slurm_submission_scripts/` directory. You can submit a job with 
-
-```bash 
-sbatch exeter_isca_slurm_submission_scripts/<script-name>.slurm
-```
-#### Method 2: Interactive GPU Session
+#### Method 1: Interactive GPU Session
 If you prefer to work interactively, follow these steps:
 
 Request an interactive session: 
@@ -52,13 +54,6 @@ module load nvidia-cuda/12.1.1
 module load Python/3.11.3
 ```
 
-Clone `GPU_Training` Repo:
-
-```bash 
-git clone https://github.com/berrli/GPU_Training.git
-cd GPU_Training
-```
-
 Install the Python requirements: 
 ```bash 
 poetry install
@@ -69,6 +64,14 @@ Once your environment is ready, you can invoke any of the project’s entry poin
 poetry run cuda_check
 ```
 
+#### Method 2: Batch Submission via Slurm
+All of the key Slurm submission scripts live in the
+`exeter_isca_slurm_submission_scripts/` directory. You can submit a job with 
+
+```bash
+cd exeter_isca_slurm_submission_scripts
+sbatch <script-name>.slurm
+```
 
 ## General Installation Instructions 
 
