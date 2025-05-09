@@ -17,9 +17,6 @@ import cupy as cp
 By the end, you’ll have everything in place to leverage GPU acceleration immediately. We’ll walk you through installing the tools, configuring your environment, and running your first CUDA-powered code, so you can start leveraging the benefit of GPUs. 
 
 ## University of Exeter ISCA HPC Installation Instructions 
-```{important}
-If you’re working on the ISCA HPC at the University of Exeter, all required software is already provided as modules — you can skip these installation steps.
-```
 
 ## Clone the Repo 
 
