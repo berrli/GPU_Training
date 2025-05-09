@@ -22,7 +22,8 @@ By the end, you’ll have everything in place to leverage GPU acceleration immed
 
 To engage with all of the content within this GPU Training course, you will need to clone the repo, which can be done with 
 
-``` bash 
+``` bash
+cd /lustre/projects/Research_Project-RSATeam
 git clone https://github.com/berrli/GPU_Training
 cd GPU_Training
 ```
