@@ -74,9 +74,7 @@ pwd
 #  - -o <output>      : base name for the .qdrep/.nsys-rep files
 #
 # We wrap the profiled command with `poetry run` to use the project venv.
-nsys profile --sample=none --trace=cuda,nvtx \
-  -o "../output/${SLURM_JOB_NAME}_${SLURM_JOB_ID}_exp_report" -- \
-  poetry run game_of_life_experiment_profiled --profile-gpu --profile-cpu
+nsys profile --sample=none --trace=cuda,nvtx -o ../output/NVIDIA_NSight_exp_report poetry run game_of_life_experiment_profiled --profile-gpu --profile-cpu
 
 
 echo "=== Nsight Systems profiling complete ==="
