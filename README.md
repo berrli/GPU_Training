@@ -18,6 +18,8 @@ By the end, you’ll have everything in place to leverage GPU acceleration immed
 
 ## University of Exeter ISCA HPC Installation Instructions 
 
+If you have not used an HPC platform before, then you may benefit from going through the material in "Helpful Auxiliary Software" on this page, as it will guide you through the process of connecting to an HPC platform, after which you can continue moving through these set-up instructions.
+
 ## Clone the Repo
 
 To engage with all of the content within this GPU Training course, you will need to clone the repo, which can be done with 
