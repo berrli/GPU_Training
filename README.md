@@ -28,7 +28,7 @@ To engage with all of the content within this GPU Training course, you will need
 cd /lustre/projects/Research_Project-RSATeam #This is the directory that the RSA Team will do the course in.
 mkdir $USER # Create a directory for you within the project space.
 cd $USER
-git clone https://github.com/berrli/GPU_Training
+git clone https://github.com/liamjberrisford/GPU_Training
 cd GPU_Training
 ```
 
@@ -90,7 +90,7 @@ If you are self-studying, then please read up to the section "Project: Conway's 
 To engage with all of the content within this GPU Training course, you will need to clone the repo, which can be done with 
 
 ``` bash 
-git clone https://github.com/berrli/GPU_Training
+git clone https://github.com/liamjberrisford/GPU_Training
 ```
 
 ## Spack - Installing system-level requirements
@@ -149,7 +149,7 @@ Poetry can be uninstalled with `curl -sSL https://install.python-poetry.org | py
 ```
 
 ```{note}
-`poetry install` needs to be run from within the training course repo. If you haven't, then you need to clone this repo with `git clone https://github.com/berrli/GPU_Training` and then navigate to its root with `cd GPU_Training`
+`poetry install` needs to be run from within the training course repo. If you haven't, then you need to clone this repo with `git clone https://github.com/liamjberrisford/GPU_Training` and then navigate to its root with `cd GPU_Training`
 ```
 
 All of the user-level requirements can be installed via Poetry with the command:
